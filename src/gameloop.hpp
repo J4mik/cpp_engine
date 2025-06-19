@@ -34,10 +34,13 @@ void game() {
 	temp.h = 48;
 	temp.w = 48;
 
-    SDL_Rect dirt{0, 0, 16, 16};
-    SDL_Rect grass{0, 16, 16, 16};
-	SDL_Rect path{0, 32, 16, 16};
-	SDL_Rect sand{0, 48, 16, 16};
+    SDL_Rect playerPos{0, 0, 24, 36};
+
+    SDL_Rect rock{0, 0, 12, 12};
+    SDL_Rect grass{0, 12, 12, 12};
+	SDL_Rect path{0, 24, 12, 12};
+    SDL_Rect dirt{0, 36, 12, 12};
+	SDL_Rect sand{12, 0, 12, 12};
 
     sprite player;
 
@@ -57,16 +60,17 @@ void game() {
         SDL_RenderCopy(rend, texture, &path, &temp);
         temp.x = 144;
         SDL_RenderCopy(rend, texture, &sand, &temp);
+        temp.x = 192;
+        SDL_RenderCopy(rend, texture, &rock, &temp);
 
-        temp.x = round(player.x);
-        temp.y = round(player.y);
-        SDL_RenderCopyEx(rend, playerSprite, NULL, &temp, 0, 0, (player.flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE));
-        temp.y = 0;
+        playerPos.x = round(player.x);
+        playerPos.y = round(player.y);
+        SDL_RenderCopyEx(rend, playerSprite, NULL, &playerPos, 0, 0, (player.flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE));
 
         player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * deltaTime;
         player.VectY += ((key.s || key.downArrow) - (key.w || key.upArrow)) * deltaTime;
-        player.x += player.VectX * deltaTime / 200;
-        player.y += player.VectY * deltaTime / 200;
+        player.x += player.VectX * deltaTime / 350;
+        player.y += player.VectY * deltaTime / 350;
 
         player.VectX *= power.sqr(deltaTime);
         player.VectY *= power.sqr(deltaTime);
