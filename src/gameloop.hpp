@@ -5,7 +5,7 @@
 // #include "include/JSON/json.hpp"
 
 void game() {
-    decay power{};
+    decay power{}; // initialises exponential ot calculate player friction
 
     power.innit();
 
@@ -44,10 +44,6 @@ void game() {
 
     sprite player;
 
-    // for (int i = 0; ++i < 50;) {
-    //     std::cout << power.sqr(i) << "\n";
-    // }
-
     while (running) {
         SDL_GetWindowSizeInPixels(win, &screen.w, &screen.h);
         SDL_RenderClear(rend);
@@ -63,17 +59,20 @@ void game() {
         temp.x = 192;
         SDL_RenderCopy(rend, texture, &rock, &temp);
 
-        playerPos.x = round(player.x);
+        playerPos.x = round(player.x) + ;
         playerPos.y = round(player.y);
         SDL_RenderCopyEx(rend, playerSprite, NULL, &playerPos, 0, 0, (player.flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE));
 
-        player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * deltaTime;
-        player.VectY += ((key.s || key.downArrow) - (key.w || key.upArrow)) * deltaTime;
-        player.x += player.VectX * deltaTime / 350;
-        player.y += player.VectY * deltaTime / 350;
+        player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * (power.sqr(deltaTime) + 1) * deltaTime; // player movement & integral to account for friction
+        player.VectY += ((key.s || key.downArrow) - (key.w || key.upArrow)) * (power.sqr(deltaTime) + 1) * deltaTime;
+
+        player.x += player.VectX * (power.sqr(deltaTime) + 1) * deltaTime / 1000; // integral to ensure same speed at all framerates
+        player.y += player.VectY * (power.sqr(deltaTime) + 1) * deltaTime / 1000;
 
         player.VectX *= power.sqr(deltaTime);
         player.VectY *= power.sqr(deltaTime);
+
+        screen
 
         if (player.VectX > 0) {
             player.flip = 0;
@@ -84,6 +83,6 @@ void game() {
         
         SDL_RenderPresent(rend);
         std::cout << deltaTime << "\n";
-        SDL_Delay(1000/100);
+        SDL_Delay(1000/180);
     }
 }
