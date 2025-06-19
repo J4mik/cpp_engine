@@ -2,8 +2,6 @@
 
 #include <cmath>
 
-// #include "include/JSON/json.hpp"
-
 void game() {
     decay power{}; // initialises exponential ot calculate player friction
 
