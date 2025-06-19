@@ -20,8 +20,8 @@ class sprite {
 	double y;
 	uint16_t h;
 	uint16_t w;
-	double Vectx;
-	double Vecty;
+	double VectX;
+	double VectY;
 	bool flip;
 };
 
@@ -37,6 +37,26 @@ struct {
 } key;
 
 bool running = 1;
+
+class decay {
+	private:
+		double pow255[1024] = {};
+	public:
+		void innit() {
+			pow255[0] = 1;
+			std::cout << pow255[0];
+			for (int i = 1; i < 1024; ++i) {
+				pow255[i] = pow255[i-1] * 127/128;
+				// std::cout << pow255[i] << '\n';
+			}
+		}
+		double sqr(int number) {
+			if (number < 1024) {
+				return(pow255[number]);
+			}
+			return(0);
+		}
+};
 
 void inputs() {
 		SDL_Event event;
@@ -108,12 +128,4 @@ void inputs() {
     
 	deltaTime = SDL_GetTicks64() - lastTick;
 	lastTick = SDL_GetTicks64();
-
-		// SDL_RenderCopyEx(rend, block, NULL, &player, 0, 0, SDL_FLIP_NONE);
-
-		// SDL_RenderCopyEx(rend, block, NULL, &player, 0, 0, SDL_FLIP_HORIZONTAL);
-		// SDL_RenderCopyEx(rend, block, NULL, &player, 0, 0, SDL_FLIP_NONE);
-		
-
-		// SDL_Delay(1000/72);		
 }
