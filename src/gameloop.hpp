@@ -7,7 +7,7 @@ void game() {
 
     power.innit();
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) == 1) {}
+    if (SDL_Init(SDL_INIT_EVERYTHING) == 1) {
 		std::cout << SDL_GetError;
 	}
 	SDL_Window* win = SDL_CreateWindow("Flashblade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen.w, screen.h, SDL_WINDOW_RESIZABLE);
@@ -55,7 +55,7 @@ void game() {
         temp.x = 192;
         SDL_RenderCopy(rend, texture, &rock, &temp);
 
-        playerPos.x = round(player.x) + ;
+        playerPos.x = round(player.x);
         playerPos.y = round(player.y);
         SDL_RenderCopyEx(rend, playerSprite, NULL, &playerPos, 0, 0, (player.flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE));
 
@@ -68,7 +68,6 @@ void game() {
         player.VectX *= power.sqr(deltaTime);
         player.VectY *= power.sqr(deltaTime);
 
-        screen
 
         if (player.VectX > 0) {
             player.flip = 0;
@@ -78,7 +77,7 @@ void game() {
         }
         
         SDL_RenderPresent(rend);
-        std::cout << deltaTime << "\n";
+        // std::cout << deltaTime << "\n";
         SDL_Delay(1000/180);
     }
 }
