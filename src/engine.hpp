@@ -4,6 +4,8 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
 
+#include <GL/gl.h>
+
 uint64_t lastTick;
 uint16_t deltaTime;
 

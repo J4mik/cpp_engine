@@ -10,11 +10,13 @@ void game() {
     if (SDL_Init(SDL_INIT_EVERYTHING) == 1) {
 		std::cout << SDL_GetError;
 	}
-	SDL_Window* win = SDL_CreateWindow("Flashblade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen.w, screen.h, SDL_WINDOW_RESIZABLE);
+	SDL_Window* win = SDL_CreateWindow("Flashblade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen.w, screen.h, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
 	void SDL_SetWindowResizable(SDL_Window * window, SDL_bool resizable);
 
 	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+
+    SDL_GLContext shader = nullptr;
 
     SDL_Surface* blocks;
     SDL_Surface* playerImage;
@@ -25,6 +27,8 @@ void game() {
 	SDL_Texture* playerSprite = SDL_CreateTextureFromSurface(rend, playerImage);
 
     SDL_Rect temp;
+
+
 	temp.x = 0;
 	temp.y = 0;
 	temp.h = 48;
@@ -40,9 +44,18 @@ void game() {
 
     sprite player;
 
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+    shader = SDL_GL_CreateContext(win);
+
     while (running) {
         SDL_GetWindowSizeInPixels(win, &screen.w, &screen.h);
         SDL_RenderClear(rend);
+
+        // SDL_GL_SwapWindow(win);
         inputs();
         temp.x = 0;
         SDL_RenderCopy(rend, texture, &dirt, &temp);
