@@ -9,14 +9,12 @@ void game() {
 
     power.innit();
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) == 1) {
+    if (SDL_Init(SDL_INIT_EVERYTHING) == 1) {}
 		std::cout << SDL_GetError;
 	}
 	SDL_Window* win = SDL_CreateWindow("Flashblade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen.w, screen.h, SDL_WINDOW_RESIZABLE);
 
 	void SDL_SetWindowResizable(SDL_Window * window, SDL_bool resizable);
-
-	SDL_GetWindowSizeInPixels(win, &screen.w, &screen.h);
 
 	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 
