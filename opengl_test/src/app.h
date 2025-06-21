@@ -16,7 +16,8 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 
-#include "./constants.hpp"
+#include "constants.hpp"
+#include "shader.hpp"
 
 class App {
 public:
@@ -159,7 +160,7 @@ public:
             // update framebuffer
             glViewport(0, 0, m_width, m_height);
 
-            glClearColor(0.f, 0.f, 0.f, 1.f);
+            glClearColor(1.f, 0.f, 0.f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             SDL_GL_SwapWindow(m_window);
