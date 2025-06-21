@@ -20,7 +20,7 @@ public:
     App() = default;
 
     ~App() {
-        if (!_closed) {
+        if (!m_closed) {
             close();
         }
     }
@@ -67,7 +67,7 @@ public:
         }
         std::cout << ".";
 
-        if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
+        if (Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1)
         {
             std::cout << "..!\n";
             std::cout << "GAME::INIT::ERROR Mix_OpenAudio: " << Mix_GetError() << std::endl;
@@ -77,21 +77,21 @@ public:
 
         // --------------- INITIALIZE SDL components -------------- //
 
-        _window = SDL_CreateWindow("SDL2 Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-        if (_window == nullptr) {
+        m_window = SDL_CreateWindow("SDL2 Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+        if (m_window == nullptr) {
             std::cout << "..!\n";
             std::cout << "GAME::INIT::ERROR Failed to create SDL_Window! SDL_Error: " << SDL_GetError() << std::endl;
             return false;
         }
         std::cout << ".";
 
-        _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-        if (_renderer == nullptr) {
+        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        if (m_renderer == nullptr) {
             std::cout << "..!\n";
             std::cout << "GAME::INIT::ERROR Failed to create SDL_Renderer! SDL_Error: " << SDL_GetError() << std::endl;
             return false;
         }
-        SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+        SDL_SetRenderDrawColor(m_renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
 
         std::cout << ".\n";
         std::cout << "GAME::INIT::OK!" << std::endl;
@@ -107,16 +107,16 @@ public:
 
     // destroy renderer & window and quit SDL subsystems
     void close() {
-        if (!_closed) {
+        if (!m_closed) {
             std::cout << "GAME::CLOSING...\n";
-            SDL_DestroyRenderer(_renderer);
-            SDL_DestroyWindow(_window);
+            SDL_DestroyRenderer(m_renderer);
+            SDL_DestroyWindow(m_window);
             TTF_Quit();
             IMG_Quit();
             Mix_Quit();
             SDL_Quit();
             std::cout << "GAME::CLOSED!\n";
-            _closed = true;
+            m_closed = true;
         }
     }
 
@@ -130,67 +130,67 @@ public:
                     running = false;
                 } else if (event.type == SDL_MOUSEMOTION)
                 {
-                    SDL_GetGlobalMouseState(&_mouseX, &_mouseY);
-                    _mouseX -= _windowX;
-                    _mouseY -= _windowY;
+                    SDL_GetGlobalMouseState(&m_mouseX, &m_mouseY);
+                    m_mouseX -= m_windowX;
+                    m_mouseY -= m_windowY;
                 } else if (event.type == SDL_WINDOWEVENT)
                 {
                     // handle window events
-                    _width = event.window.data1 / 3;
-                    _height = event.window.data2 / 3;
-                    SDL_RenderPresent(_renderer);
+                    m_width = event.window.data1 / 3;
+                    m_height = event.window.data2 / 3;
+                    SDL_RenderPresent(m_renderer);
                 }
             }
 
-            SDL_GetWindowPosition(_window, &_windowX, &_windowY);
+            SDL_GetWindowPosition(m_window, &m_windowX, &m_windowY);
 
             // clear screen
-            SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
-            SDL_RenderClear(_renderer);
+            SDL_SetRenderDrawColor(m_renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+            SDL_RenderClear(m_renderer);
 
-            SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_NONE);
+            SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_NONE);
 
-            SDL_RenderPresent(_renderer);
+            SDL_RenderPresent(m_renderer);
 
         } while (running);
     }
 
     [[nodiscard]] int getWidth() const {
-        return _width;
+        return m_width;
     }
 
     [[nodiscard]] int getHeight() const {
-        return _height;
+        return m_height;
     }
 
     [[nodiscard]] int getMouseX() const {
-        return _mouseX;
+        return m_mouseX;
     }
 
     [[nodiscard]] int getMouseY() const {
-        return _mouseY;
+        return m_mouseY;
     }
 
     [[nodiscard]] int getWindowX() const {
-        return _windowX;
+        return m_windowX;
     }
 
     [[nodiscard]] int getWindowY() const {
-        return _windowY;
+        return m_windowY;
     }
 
 private:
-    SDL_Window* _window {nullptr};
-    SDL_Renderer* _renderer {nullptr};
+    SDL_Window* m_window {nullptr};
+    SDL_Renderer* m_renderer {nullptr};
 
-    bool _closed{false};
+    bool m_closed{false};
 
-    int _width {WINDOW_WIDTH};
-    int _height {WINDOW_HEIGHT};
-    int _mouseX {0};
-    int _mouseY {0};
-    int _windowX {0};
-    int _windowY {0};
+    int m_width {WINDOW_WIDTH};
+    int m_height {WINDOW_HEIGHT};
+    int m_mouseX {0};
+    int m_mouseY {0};
+    int m_windowX {0};
+    int m_windowY {0};
 };
 
 #endif //APP_H
