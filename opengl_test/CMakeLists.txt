@@ -26,8 +26,8 @@ set(SOURCES src/extern/glad.c main.cpp
         src/core/util.hpp
         src/core/texture.h
         src/core/vec2.hpp
-        # src/shader.h
-        # src/shader.cpp
+        src/shader.hpp
+        src/shader.cpp
 )
 
 #g++ main.cpp src/extern/glad.c -o main -Iinclude -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf        
