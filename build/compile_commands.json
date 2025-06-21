@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/jenskromdijk/src/cpp_engine/build",
+  "command": "/usr/bin/g++ -I/home/jenskromdijk/src/cpp_engine/include -g -o CMakeFiles/main.dir/main.cpp.o -c /home/jenskromdijk/src/cpp_engine/main.cpp",
+  "file": "/home/jenskromdijk/src/cpp_engine/main.cpp",
+  "output": "CMakeFiles/main.dir/main.cpp.o"
+}
+]
