@@ -5,8 +5,11 @@
 #ifndef APP_H
 #define APP_H
 
+#include <glad/glad.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_video.h>
+#include <SDL2/SDL_opengl.h>
 
 #include <iostream>
 #include <SDL2/SDL_image.h>
@@ -48,7 +51,6 @@ public:
             std::cout << "GAME::INIT::ERROR SDL_Init: " << SDL_GetError() << std::endl;
             return false;
         }
-        std::cout << ".";
 
         // initialize SDL_Image
         int imgFlags {IMG_INIT_PNG};
@@ -57,7 +59,6 @@ public:
             std::cout << "GAME::INIT::ERROR IMG_Init: " << IMG_GetError() << std::endl;
             return false;
         }
-        std::cout << ".";
 
         // initialize SDL_TTF
         if (TTF_Init() == -1) {
@@ -65,7 +66,6 @@ public:
             std::cout << "GAME::INIT::ERROR TTF_Init: " << TTF_GetError() << std::endl;
             return false;
         }
-        std::cout << ".";
 
         if (Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1)
         {
@@ -73,25 +73,45 @@ public:
             std::cout << "GAME::INIT::ERROR Mix_OpenAudio: " << Mix_GetError() << std::endl;
             return false;
         }
-        std::cout << ".";
 
         // --------------- INITIALIZE SDL components -------------- //
 
-        m_window = SDL_CreateWindow("SDL2 Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+        m_window = SDL_CreateWindow("SDL2 Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
         if (m_window == nullptr) {
             std::cout << "..!\n";
             std::cout << "GAME::INIT::ERROR Failed to create SDL_Window! SDL_Error: " << SDL_GetError() << std::endl;
             return false;
         }
-        std::cout << ".";
 
-        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-        if (m_renderer == nullptr) {
-            std::cout << "..!\n";
-            std::cout << "GAME::INIT::ERROR Failed to create SDL_Renderer! SDL_Error: " << SDL_GetError() << std::endl;
+        // set up opengl
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+        // create opengl context
+        m_context = SDL_GL_CreateContext(m_window);
+        if (m_context == nullptr)
+        {
+            std::cout << "GAME::INIT::ERROR Failed to create OpenGL context!" << std::endl;
             return false;
+        } else {
+            // initialize glad
+            if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(SDL_GL_GetProcAddress)))
+            {
+                std::cout << "GAME::INIT::ERROR Failed to initialize GLAD!" << std::endl;
+                return false;
+            }
+
+            std::cout << "GAME::INIT Successfully initialized GLAD!" << std::endl;
         }
-        SDL_SetRenderDrawColor(m_renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+
+        // m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        // if (m_renderer == nullptr) {
+        //     std::cout << "..!\n";
+        //     std::cout << "GAME::INIT::ERROR Failed to create SDL_Renderer! SDL_Error: " << SDL_GetError() << std::endl;
+        //     return false;
+        // }
+        // SDL_SetRenderDrawColor(m_renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
 
         std::cout << ".\n";
         std::cout << "GAME::INIT::OK!" << std::endl;
@@ -139,18 +159,32 @@ public:
                     m_width = event.window.data1 / 3;
                     m_height = event.window.data2 / 3;
                     SDL_RenderPresent(m_renderer);
+                } else if (event.type == SDL_KEYDOWN)
+                {
+                    if (event.key.keysym.sym = SDLK_ESCAPE)
+                    {
+                        running = false;
+                    }
                 }
             }
 
             SDL_GetWindowPosition(m_window, &m_windowX, &m_windowY);
 
+            // update framebuffer
+            glViewport(0, 0, m_width, m_height);
+
             // clear screen
-            SDL_SetRenderDrawColor(m_renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
-            SDL_RenderClear(m_renderer);
+            // SDL_SetRenderDrawColor(m_renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+            // SDL_RenderClear(m_renderer);
 
-            SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_NONE);
+            // SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_NONE);
 
-            SDL_RenderPresent(m_renderer);
+            // SDL_RenderPresent(m_renderer);
+
+            glClearColor(0.f, 0.f, 0.f, 1.f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            SDL_GL_SwapWindow(m_window);
 
         } while (running);
     }
@@ -182,6 +216,7 @@ public:
 private:
     SDL_Window* m_window {nullptr};
     SDL_Renderer* m_renderer {nullptr};
+    SDL_GLContext m_context{};
 
     bool m_closed{false};
 
