@@ -7,6 +7,11 @@
 #include <fstream>
 #include <sstream>
 
+Shader::~Shader()
+{
+    glDeleteProgram(m_ID);
+}
+
 void Shader::loadFromFile(const char* fragPath, const char* vertPath)
 {
     std::string vertCode;
