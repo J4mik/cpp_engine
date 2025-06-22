@@ -1,6 +1,11 @@
 #include "engine.hpp"
 
 #include <cmath>
+#include <vector>
+
+const std::vector<GLfloat> vertex{
+    0.0f, 0.0f, 0.0f
+};
 
 void game() {
     decay power{}; // initialises exponential ot calculate player friction
@@ -14,7 +19,15 @@ void game() {
 
 	void SDL_SetWindowResizable(SDL_Window * window, SDL_bool resizable);
 
-	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+	// SDL_Renderer* renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+
+    SDL_Texture* render;
+
+	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED); // | SDL_RENDERER_TARGETTEXTURE);
+
+    // render.setAsRenderTarget(rend);
+
+    SDL_SetRenderTarget(rend, render);
 
     SDL_GLContext shader = nullptr;
 
@@ -28,6 +41,7 @@ void game() {
 
     SDL_Rect temp;
 
+    const SDL_Rect screen2{0, 0, screen.w, screen.h};
 
 	temp.x = 0;
 	temp.y = 0;
@@ -45,9 +59,9 @@ void game() {
     sprite player;
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); 
 
     shader = SDL_GL_CreateContext(win);
 
@@ -90,6 +104,13 @@ void game() {
         }
         
         SDL_RenderPresent(rend);
+
+        // SDL_RenderClear(renderer);
+
+        // SDL_RenderCopy(renderer, render, NULL, &screen2);
+
+        // SDL_RenderPresent(renderer);
+
         // std::cout << deltaTime << "\n";
         SDL_Delay(1000/180);
     }
