@@ -36,37 +36,37 @@ include CMakeFiles/rules.ninja
 
 cmake_ninja_workdir = D$:/files/code/cpp_engine/bin/
 # =============================================================================
-# Object build statements for EXECUTABLE target main
+# Object build statements for EXECUTABLE target Defblade
 
 
 #############################################
-# Order-only phony target for main
+# Order-only phony target for Defblade
 
-build cmake_object_order_depends_target_main: phony || .
+build cmake_object_order_depends_target_Defblade: phony || .
 
-build CMakeFiles/main.dir/main.cpp.obj: CXX_COMPILER__main_unscanned_ D$:/files/code/cpp_engine/main.cpp || cmake_object_order_depends_target_main
-  DEP_FILE = CMakeFiles\main.dir\main.cpp.obj.d
+build CMakeFiles/Defblade.dir/main.cpp.obj: CXX_COMPILER__Defblade_unscanned_ D$:/files/code/cpp_engine/main.cpp || cmake_object_order_depends_target_Defblade
+  DEP_FILE = CMakeFiles\Defblade.dir\main.cpp.obj.d
   INCLUDES = -ID:/files/code/cpp_engine/include
-  OBJECT_DIR = CMakeFiles\main.dir
-  OBJECT_FILE_DIR = CMakeFiles\main.dir
+  OBJECT_DIR = CMakeFiles\Defblade.dir
+  OBJECT_FILE_DIR = CMakeFiles\Defblade.dir
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target main
+# Link build statements for EXECUTABLE target Defblade
 
 
 #############################################
-# Link the executable main.exe
+# Link the executable Defblade.exe
 
-build main.exe: CXX_EXECUTABLE_LINKER__main_ CMakeFiles/main.dir/main.cpp.obj
-  LINK_LIBRARIES = -lSDL2config  -lSDL2main  -lSDL2  -lSDL2_image  -lSDL2_mixer  -lSDL2_ttf  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+build Defblade.exe: CXX_EXECUTABLE_LINKER__Defblade_ CMakeFiles/Defblade.dir/main.cpp.obj
+  LINK_LIBRARIES = -lmingw32  -lSDL2main  -lSDL2  -lSDL2_image  -lSDL2_mixer  -lSDL2_ttf  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   LINK_PATH = -LD:/files/code/cpp_engine/lib
-  OBJECT_DIR = CMakeFiles\main.dir
+  OBJECT_DIR = CMakeFiles\Defblade.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
-  TARGET_FILE = main.exe
-  TARGET_IMPLIB = libmain.dll.a
-  TARGET_PDB = main.exe.dbg
+  TARGET_FILE = Defblade.exe
+  TARGET_IMPLIB = libDefblade.dll.a
+  TARGET_PDB = Defblade.exe.dbg
 
 
 #############################################
@@ -95,7 +95,7 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
-build main: phony main.exe
+build Defblade: phony Defblade.exe
 
 # =============================================================================
 # Folder targets.
@@ -112,7 +112,7 @@ build codegen: phony
 #############################################
 # Folder: D:/files/code/cpp_engine/bin
 
-build all: phony main.exe
+build all: phony Defblade.exe
 
 # =============================================================================
 # Built-in targets
