@@ -9,6 +9,7 @@ class Shader
 {
 public:
     Shader() = default;
+    ~Shader();
 
     void loadFromFile(const char* fragPath, const char* vertPath);
 
