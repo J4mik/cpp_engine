@@ -4,8 +4,24 @@
 #include <vector>
 
 const std::vector<GLfloat> vertex{
-    0.0f, 0.0f, 0.0f
+    0.8f, -0.8f, 0.0f,  1.0f, 0.0f, 0.0f,
+    -0.8f, -0.8f, 0.0f,  0.0f, 1.0f, 0.0f,
+    0.0f, 0.8f, 0.0f,  0.0f, 0.0f, 1.0f
 };
+
+const char *vertexShaderSource = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\0";
+
+const char *fragmentShaderSource = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "}\n\0";
 
 void game() {
     decay power{}; // initialises exponential ot calculate player friction
@@ -17,15 +33,14 @@ void game() {
 	}
 	SDL_Window* win = SDL_CreateWindow("Flashblade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen.w, screen.h, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
-	void SDL_SetWindowResizable(SDL_Window * window, SDL_bool resizable);
-
-	// SDL_Renderer* renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+    }
 
     SDL_Texture* render;
 
-	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED); // | SDL_RENDERER_TARGETTEXTURE);
-
-    // render.setAsRenderTarget(rend);
+	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 
     SDL_SetRenderTarget(rend, render);
 
@@ -64,6 +79,10 @@ void game() {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); 
 
     shader = SDL_GL_CreateContext(win);
+
+    // unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    // glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    // glCompileShader(vertexShader);
 
     while (running) {
         SDL_GetWindowSizeInPixels(win, &screen.w, &screen.h);

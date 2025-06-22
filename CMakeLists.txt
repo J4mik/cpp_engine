@@ -10,7 +10,7 @@ set(CMAKE_MAKE_PROGRAM ninja)
 # set(CMAKE_CXX_FLAGS -mwindows)
 
 # sources
-set(SOURCES main.cpp)# src/tiles.cpp)
+set(SOURCES src/glad.c main.cpp)# src/tiles.cpp)
 
 # -Iinclude
 include_directories(${CMAKE_SOURCE_DIR}/include)
