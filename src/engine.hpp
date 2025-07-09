@@ -5,7 +5,6 @@
 #include <SDL2/SDL_timer.h>
 
 // #include <GL/gl.h>
-#include "../include/glad/glad.h"
 
 uint64_t lastTick;
 uint16_t deltaTime;

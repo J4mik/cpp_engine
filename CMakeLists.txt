@@ -23,6 +23,6 @@ add_executable(Defblade ${SOURCES})
 set(SDL2_LIBRARIES mingw32 SDL2main SDL2 SDL2_image SDL2_mixer SDL2_ttf)
 
 # link it so ld can find it
-target_link_libraries(Defblade PUBLIC ${SDL2_LIBRARIES})
+target_link_libraries(Defblade PUBLIC glad ${SDL2_LIBRARIES})
 
 # target_sources(Defblade PRIVATE resources.rc)
