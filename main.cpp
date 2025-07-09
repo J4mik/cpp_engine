@@ -1,6 +1,7 @@
 #include "src\gameloop.hpp"
 
 int main(int argc, char *argv[]) {
+    innit();
     game();
     // SDL_DestroyTexture(tex);
 	// SDL_DestroyRenderer(rend);

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -8,6 +9,8 @@
 
 uint64_t lastTick;
 uint16_t deltaTime;
+
+float tempFloat = 0.0345;
 
 struct {
 	int w = 1000;
@@ -39,6 +42,17 @@ struct {
 } key;
 
 bool running = 1;
+
+void innit() {
+	std::ofstream outputFileStream;
+	outputFileStream.open("test.txt", std::ios::out|std::ios::binary);
+	outputFileStream.write((char*) &tempFloat, sizeof(float));
+
+
+	// std::ifstream inputFileStream;
+	// inputFileStream.open("test.txt", std::ios::in|std::ios::binary);
+    // inputFileStream.read((char*) &float, sizeof(float));
+}
 
 class decay {
 	private:

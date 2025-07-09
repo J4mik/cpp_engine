@@ -1,28 +1,7 @@
-#include <glad/glad.h>
 #include "engine.hpp"
 
 #include <cmath>
 #include <vector>
-
-const std::vector<GLfloat> vertex{
-    0.8f, -0.8f, 0.0f,  1.0f, 0.0f, 0.0f,
-    -0.8f, -0.8f, 0.0f,  0.0f, 1.0f, 0.0f,
-    0.0f, 0.8f, 0.0f,  0.0f, 0.0f, 1.0f
-};
-
-const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-
-const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\n\0";
 
 void game() {
     decay power{}; // initialises exponential ot calculate player friction
@@ -33,16 +12,8 @@ void game() {
 		std::cout << SDL_GetError;
 	}
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); 
-
 	SDL_Window* win = SDL_CreateWindow("Flashblade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen.w, screen.h, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
-	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-    }
 
     SDL_Texture* render;
 
@@ -79,22 +50,11 @@ void game() {
 
     sprite player;
 
-    shader = SDL_GL_CreateContext(win);
-
-    // unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    // glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    // glCompileShader(vertexShader);
-
-    
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
 
     while (running) {
         SDL_GetWindowSizeInPixels(win, &screen.w, &screen.h);
         SDL_RenderClear(rend);
-
-        // SDL_GL_SwapWindow(win);
+        
         inputs();
         temp.x = 0;
         SDL_RenderCopy(rend, texture, &dirt, &temp);
@@ -129,12 +89,6 @@ void game() {
         }
         
         SDL_RenderPresent(rend);
-
-        // SDL_RenderClear(renderer);
-
-        // SDL_RenderCopy(renderer, render, NULL, &screen2);
-
-        // SDL_RenderPresent(renderer);
 
         // std::cout << deltaTime << "\n";
         SDL_Delay(1000/180);
