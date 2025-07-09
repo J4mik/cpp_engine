@@ -10,7 +10,8 @@
 uint64_t lastTick;
 uint16_t deltaTime;
 
-float tempFloat = 0.0345;
+uint32_t tempFloat = 3245717;
+uint32_t newFloat;
 
 struct {
 	int w = 1000;
@@ -43,27 +44,28 @@ struct {
 
 bool running = 1;
 
-void innit() {
+void innit(std::basic_string<char> file) {
 	std::ofstream outputFileStream;
-	outputFileStream.open("test.txt", std::ios::out|std::ios::binary);
-	outputFileStream.write((char*) &tempFloat, sizeof(float));
+	outputFileStream.open(file, std::ios::out|std::ios::binary);
+	outputFileStream.write((char*) &tempFloat, 4);
+	outputFileStream.close();
 
 
-	// std::ifstream inputFileStream;
-	// inputFileStream.open("test.txt", std::ios::in|std::ios::binary);
-    // inputFileStream.read((char*) &float, sizeof(float));
+	std::ifstream inputFileStream;
+	inputFileStream.open(file, std::ios::in|std::ios::binary);
+    inputFileStream.read((char*) &newFloat, 4); // if doesn't work try: sizeof(uint32_t) instead of 4
+	inputFileStream.close();
+	std::cout << newFloat;
 }
 
 class decay {
 	private:
-		double pow255[1024] = {};
+		double pow255[1024];
 	public:
 		void innit() {
 			pow255[0] = 1;
-			std::cout << pow255[0];
 			for (int i = 1; i < 1024; ++i) {
 				pow255[i] = pow255[i-1] * 127/128;
-				// std::cout << pow255[i] << '\n';
 			}
 		}
 		double sqr(int number) {
