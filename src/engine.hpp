@@ -66,19 +66,20 @@ class decay {
 	public:
 		void innit(std::basic_string<char> path) {
 
-			std::ifstream FileStream;
-			FileStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-			try {
-				FileStream.open(path, std::ios::in|std::ios::binary);
-				for (int i = 0; i < length; ++i) {
-					FileStream.read((char*) &pow255[i], 8); 
-				}
-				FileStream.close();
-			}
-			catch ([[maybe_unused]] std::ifstream::failure &error){
-				std::cout << "error code: " << error << "\n";
-			}
-			if (!pow255[0] == 1) {
+			// std::ifstream FileStream;
+			// FileStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+			// try {
+			// 	FileStream.open(path, std::ios::in|std::ios::binary);
+			// 	for (int i = 0; i < length; ++i) {
+			// 		FileStream.read((char*) &pow255[i], 8);
+			// 		std::cout << pow255[i];
+			// 	}
+			// 	FileStream.close();
+			// }
+			// catch ([[maybe_unused]] std::ifstream::failure &error){
+			// 	std::cout << "error code: "; // << error << "\n";
+			// }
+			if (1) { //!pow255[0] == 1) {
 				std::cout << "Error reading from file '" << path << "', recreating file contents\n";
 				std::ofstream FileStream;
 				FileStream.open(path, std::ios::out|std::ios::binary);
