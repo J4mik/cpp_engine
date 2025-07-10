@@ -20,18 +20,10 @@ set(BIN_NAME main)
 include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src/extern/)
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 
-set(SOURCES src/extern/glad.c main.cpp
-        src/app.h
-        src/constants.hpp
-        src/core/util.hpp
-        src/core/texture.h
-        src/core/vec2.hpp
-        src/shader.hpp
-        src/shader.cpp
-)
+set(SOURCES main.cpp)
 
 #g++ main.cpp src/extern/glad.c -o main -Iinclude -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf        
 add_executable(${BIN_NAME} ${SOURCES})
 
-set(SDL2_LIBRARIES SDL2main SDL2 SDL2_image SDL2_mixer SDL2_ttf glad)
+set(SDL2_LIBRARIES SDL2main SDL2 SDL2_image SDL2_mixer SDL2_ttf)
 target_link_libraries(${BIN_NAME} PUBLIC GL GLU ${SDL2_LIBRARIES})
