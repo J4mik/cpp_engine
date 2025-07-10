@@ -3,10 +3,12 @@
 #include <cmath>
 #include <vector>
 
-void game() {
-    decay power{}; // initialises exponential ot calculate player friction
+// using namespace nlohmann;
 
-    power.innit("/src/data/number.bin");
+void game() {
+    expDecay power{}; // initialises exponential decay to calculate player friction
+
+    power.innit("./src/data/number.bin");
 
     if (SDL_Init(SDL_INIT_EVERYTHING) == 1) {
 		std::cout << SDL_GetError;
@@ -72,8 +74,16 @@ void game() {
         player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * (power.sqr(deltaTime) + 1) * deltaTime; // player movement & integral to account for friction
         player.VectY += ((key.s || key.downArrow) - (key.w || key.upArrow)) * (power.sqr(deltaTime) + 1) * deltaTime;
 
-        player.x += player.VectX * (power.sqr(deltaTime) + 1) * deltaTime / 1000; // integral to ensure same speed at all framerates
-        player.y += player.VectY * (power.sqr(deltaTime) + 1) * deltaTime / 1000;
+        
+
+        if (abs((key.d || key.rightArrow) - (key.a || key.leftArrow)) + abs((key.s || key.downArrow) - (key.w || key.upArrow)) == 2) {
+            player.x += player.VectX * (power.sqr(deltaTime * 1.4) + 1) * deltaTime / 1000; // integral to ensure same descelaration at all framerates
+            player.y += player.VectY * (power.sqr(deltaTime * 1.4) + 1) * deltaTime / 1000;
+        }
+        else {
+            player.x += player.VectX * (power.sqr(deltaTime) + 1) * deltaTime / 1000; // integral to ensure same speed at all framerates
+            player.y += player.VectY * (power.sqr(deltaTime) + 1) * deltaTime / 1000;
+        }
 
         player.VectX *= power.sqr(deltaTime);
         player.VectY *= power.sqr(deltaTime);
