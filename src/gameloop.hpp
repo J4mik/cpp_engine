@@ -12,22 +12,16 @@ void game() {
 		std::cout << SDL_GetError;
 	}
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); 
-
 	SDL_Window* win = SDL_CreateWindow("Flashblade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen.w, screen.h, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
-	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-    }
 
     SDL_Texture* render;
 
 	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 
     SDL_SetRenderTarget(rend, render);
+
+    SDL_GLContext shader = nullptr;
 
     SDL_Surface* blocks;
     SDL_Surface* playerImage;
@@ -56,21 +50,11 @@ void game() {
 
     sprite player;
 
-    shader = SDL_GL_CreateContext(win);
-
-    // unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    // glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    // glCompileShader(vertexShader);
-
-    
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
 
     while (running) {
         SDL_GetWindowSizeInPixels(win, &screen.w, &screen.h);
         SDL_RenderClear(rend);
-
+        
         inputs();
         temp.x = 0;
         SDL_RenderCopy(rend, texture, &dirt, &temp);
@@ -82,8 +66,6 @@ void game() {
         SDL_RenderCopy(rend, texture, &sand, &temp);
         temp.x = 192;
         SDL_RenderCopy(rend, texture, &rock, &temp);
-        SDL_RenderCopy(rend, render, NULL, &temp);
-        
 
         playerPos.x = round(player.x);
         playerPos.y = round(player.y);
