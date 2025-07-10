@@ -10,7 +10,7 @@ set(CMAKE_MAKE_PROGRAM ninja)
 # set(CMAKE_CXX_FLAGS -mwindows)
 
 # sources
-set(SOURCES src/glad.c main.cpp)# src/tiles.cpp)
+set(SOURCES main.cpp)# src/tiles.cpp)
 
 # -Iinclude
 include_directories(${CMAKE_SOURCE_DIR}/include)
@@ -23,6 +23,6 @@ add_executable(Defblade ${SOURCES})
 set(SDL2_LIBRARIES mingw32 SDL2main SDL2 SDL2_image SDL2_mixer SDL2_ttf)
 
 # link it so ld can find it
-target_link_libraries(Defblade PUBLIC glad ${SDL2_LIBRARIES})
+target_link_libraries(Defblade PUBLIC ${SDL2_LIBRARIES})
 
 # target_sources(Defblade PRIVATE resources.rc)
