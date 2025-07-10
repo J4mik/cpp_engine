@@ -6,7 +6,7 @@
 void game() {
     decay power{}; // initialises exponential ot calculate player friction
 
-    power.innit();
+    power.innit("/src/data/number.bin");
 
     if (SDL_Init(SDL_INIT_EVERYTHING) == 1) {
 		std::cout << SDL_GetError;
@@ -17,11 +17,9 @@ void game() {
 
     SDL_Texture* render;
 
-	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED); // | SDL_RENDERER_TARGETTEXTURE);
 
-    SDL_SetRenderTarget(rend, render);
-
-    SDL_GLContext shader = nullptr;
+    // SDL_SetRenderTarget(rend, render);
 
     SDL_Surface* blocks;
     SDL_Surface* playerImage;
@@ -33,7 +31,7 @@ void game() {
 
     SDL_Rect temp;
 
-    const SDL_Rect screen2{0, 0, screen.w, screen.h};
+    // const SDL_Rect screen2{0, 0, screen.w, screen.h};
 
 	temp.x = 0;
 	temp.y = 0;

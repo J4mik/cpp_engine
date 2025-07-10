@@ -44,33 +44,56 @@ struct {
 
 bool running = 1;
 
-void innit(std::basic_string<char> file) {
-	std::ofstream outputFileStream;
-	outputFileStream.open(file, std::ios::out|std::ios::binary);
-	outputFileStream.write((char*) &tempFloat, 4);
-	outputFileStream.close();
+// void innit(std::basic_string<char> file) {
+// 	std::ofstream outputFileStream;
+// 	outputFileStream.open(file, std::ios::out|std::ios::binary);
+// 	outputFileStream.write((char*) &tempFloat, 4); // size if uint32_t is 4
+// 	outputFileStream.close();
 
 
-	std::ifstream inputFileStream;
-	inputFileStream.open(file, std::ios::in|std::ios::binary);
-    inputFileStream.read((char*) &newFloat, 4); // if doesn't work try: sizeof(uint32_t) instead of 4
-	inputFileStream.close();
-	std::cout << newFloat;
-}
+// 	std::ifstream inputFileStream;
+// 	inputFileStream.open(file, std::ios::in|std::ios::binary);
+//     inputFileStream.read((char*) &newFloat, 4); // if doesn't work try: sizeof(uint32_t) instead of 4
+// 	inputFileStream.close();
+// 	std::cout << newFloat;
+// }
 
+constexpr int length = 1024;
+// std::ios_base::failure error;
 class decay {
 	private:
-		double pow255[1024];
+		double pow255[length];
 	public:
-		void innit() {
-			std::ofstream outfile("data/number.txt", std::ios::binary);
-  			outfile.precision(10);
-   
-			pow255[0] = 1;
-			for (int i = 1; i < 1024; ++i) {
-				pow255[i] = pow255[i-1] * 127/128;
+		void innit(std::basic_string<char> path) {
+
+			std::ifstream FileStream;
+			FileStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+			try {
+				FileStream.open(path, std::ios::in|std::ios::binary);
+				for (int i = 0; i < length; ++i) {
+					FileStream.read((char*) &pow255[i], 8); 
+				}
+				FileStream.close();
 			}
-			outfile.close();
+			catch ([[maybe_unused]] std::ifstream::failure &error){
+				std::cout << "error code: " << error << "\n";
+			}
+			if (!pow255[0] == 1) {
+				std::cout << "Error reading from file '" << path << "', recreating file contents\n";
+				std::ofstream FileStream;
+				FileStream.open(path, std::ios::out|std::ios::binary);
+				pow255[0] = 1;
+				FileStream.write((char*) &pow255[0], 8);
+				for (int i = 1; i < length; ++i) {
+					pow255[i] = pow255[i-1] * 127/128;
+					FileStream.write((char*) &pow255[i], 8);
+				}
+			}
+   
+			// pow255[0] = 1;
+			// for (int i = 1; i < 1024; ++i) {
+			// 	pow255[i] = pow255[i-1] * 127/128;
+			// }
 		}
 		double sqr(int number) {
 			if (number < 1024) {
