@@ -1,15 +1,20 @@
-import pygame, sys, time, math
+import pygame, time, math
 
-WIDTH = 1000
+WIDTH = 1400
 HEIGHT = 800
-SCALE = 2
+SCALE = 3
 
 TILE_SIZE = 12
+TOTAL_TILE_SIZE = SCALE * TILE_SIZE
 CHUNK_SIZE = 8
+
+LINE_WIDTH = 2
+
+tiles = [[2, 2]]
 
 class Editor:
     def __init__(self):
-        self.screen = pygame.Surface((WIDTH // SCALE, HEIGHT // SCALE))
+        self.screen = pygame.Surface((WIDTH, HEIGHT))
         self.display = pygame.display.set_mode((WIDTH, HEIGHT), flags=pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
 
@@ -17,36 +22,72 @@ class Editor:
         self.last_time = time.time() - 1/60
 
         self.running = True
-        self.controls = {'left': False, 'right': False, 'up': False, 'down': False}
+        self.controls = {'left': False, 'right': False, 'up': False, 'down': False,
+                         'mouse_1': False, 'mouse_3': False}
 
-        self.scroll_speed = 5
+        self.scroll_speed = 5 + SCALE * 2
         self.scroll = pygame.Vector2(0, 0)
+
+        self.mouse = pygame.Vector2(0, 0)
+
+        self.block = pygame.image.load("data/images/blocks.png").convert_alpha()
     
     def close():
         pygame.quit()
-        sys.exit()
 
     def update(self):
+
+        self.mouse.x = pygame.mouse.get_pos()[0]
+        self.mouse.y = pygame.mouse.get_pos()[1]
 
         self.scroll.x += (self.controls['right'] - self.controls['left']) * self.scroll_speed * self.dt
         self.scroll.y += (self.controls['down'] - self.controls['up']) * self.scroll_speed * self.dt
 
-        render_scroll = [int(self.scroll.x), int(self.scroll.y)]
+        self.render_scroll = [int(self.scroll.x - self.screen.get_width() * 0.5), int(self.scroll.y - self.screen.get_height() * 0.5)]
 
-        self.screen.fill((0, 0, 0))
-        self.draw_tile_grid(render_scroll, [1, 1], (100, 100, 100))
-        self.draw_tile_grid(render_scroll, [CHUNK_SIZE, CHUNK_SIZE], (200, 100, 150))
-        pygame.draw.rect(self.screen, (255, 0, 0), (50 - render_scroll[0], 50 - render_scroll[1], 20, 20))
+        self.screen.fill((10, 10, 10))
+        self.draw_tile_grid([TOTAL_TILE_SIZE + LINE_WIDTH, TOTAL_TILE_SIZE + LINE_WIDTH], (20, 20, 20))
+        self.draw_tile_grid([CHUNK_SIZE * (TOTAL_TILE_SIZE + LINE_WIDTH), CHUNK_SIZE * (TOTAL_TILE_SIZE + LINE_WIDTH)], (50, 25, 35))
+        self.draw_tile_grid([10000000, 10000000], (35, 45, 70))
+        for i in range(len(tiles)):
+            self.draw([tiles[i][0], tiles[i][1]], pygame.transform.chop(self.block, (12, 0, 12, 36)))
 
+        self.draw_cursor()
+        
+    def draw_cursor(self):
+        self.temp_tile_pos = [-(self.mouse.x + self.render_scroll[0]) % (TOTAL_TILE_SIZE + LINE_WIDTH) - TOTAL_TILE_SIZE + self.mouse.x, 
+                                -(self.mouse.y + self.render_scroll[1]) % (TOTAL_TILE_SIZE + LINE_WIDTH) - TOTAL_TILE_SIZE + self.mouse.y]
+        self.rect = pygame.Rect(self.temp_tile_pos[0], self.temp_tile_pos[1], TOTAL_TILE_SIZE, TOTAL_TILE_SIZE)
+        self.screen.blit(pygame.transform.scale(pygame.transform.chop(self.block, (12, 0, 12, 36)), (TOTAL_TILE_SIZE, TOTAL_TILE_SIZE)), self.rect)
+        if self.controls['mouse_1'] != True:
+            self.surface = pygame.Surface((TOTAL_TILE_SIZE, TOTAL_TILE_SIZE))
+            self.surface.set_alpha(40)
+            self.surface.fill((255, 255, 255))
+            self.screen.blit(self.surface, self.temp_tile_pos)
+        else:
+            self.temp_tile_pos = [math.floor((self.mouse.x + self.render_scroll[0] - LINE_WIDTH * 0.5) / (TOTAL_TILE_SIZE + LINE_WIDTH)), 
+                        -math.floor((self.mouse.y + self.render_scroll[1]) / (TOTAL_TILE_SIZE + LINE_WIDTH)) - 1]
+            for i in range(len(tiles)):
+                if tiles[i] == self.temp_tile_pos:
+                    return(0)
+            tiles.append(self.temp_tile_pos)
+        
 
-    def draw_tile_grid(self, scroll, size: list | tuple, color):
-        tile_size = [TILE_SIZE * size[0], TILE_SIZE * size[1]]
+    def draw_tile_grid(self, tile_size: list | tuple, color):
         length = math.ceil(self.screen.get_width() / tile_size[0]) + 2
         height = math.ceil(self.screen.get_height() / tile_size[1]) + 2
         for x in range(length):
-            pygame.draw.line(self.screen, color, ((x - 1) * tile_size[0] - (scroll[0] % tile_size[0]), 0), ((x - 1) * tile_size[0] - (scroll[0] % tile_size[0]), self.screen.get_height()))
+            pygame.draw.line(self.screen, color, ((x - 1) * tile_size[0] - (self.render_scroll[0] % tile_size[0]), 0), ((x - 1) * tile_size[0] - (self.render_scroll[0] % tile_size[0]), self.screen.get_height()), width=LINE_WIDTH)
         for y in range(height):
-            pygame.draw.line(self.screen, color, (0, (y - 1) * tile_size[1] - (scroll[1] % tile_size[1])), (self.screen.get_width(), (y - 1) * tile_size[1] - (scroll[1] % tile_size[1])))
+            pygame.draw.line(self.screen, color, (0, (y - 1) * tile_size[1] - (self.render_scroll[1] % tile_size[1])), (self.screen.get_width(), (y - 1) * tile_size[1] - (self.render_scroll[1] % tile_size[1])), width=LINE_WIDTH)
+
+    def draw(self, pos, image):
+        pos[1] += 1
+        self.position = [(LINE_WIDTH * (pos[0] + 1) - self.render_scroll[0]) + pos[0] * TOTAL_TILE_SIZE,
+                         (LINE_WIDTH * (1 - pos[1]) - self.render_scroll[1]) - pos[1] * TOTAL_TILE_SIZE]
+        if (-TOTAL_TILE_SIZE) < self.position[0] < self.screen.get_width():
+            if (-TOTAL_TILE_SIZE) < self.position[1] < self.screen.get_height():
+                self.screen.blit(pygame.transform.scale(image, (TOTAL_TILE_SIZE, TOTAL_TILE_SIZE)), (self.position[0], self.position[1], TOTAL_TILE_SIZE, TOTAL_TILE_SIZE))
 
     def run(self):
         while self.running:
@@ -76,7 +117,17 @@ class Editor:
                     if event.key == pygame.K_DOWN:
                         self.controls['down'] = False
                 if event.type == pygame.WINDOWRESIZED:
-                    self.screen = pygame.Surface((self.display.get_width() / SCALE, self.display.get_height() / SCALE))
+                    self.screen = pygame.Surface((self.display.get_width(), self.display.get_height()))
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    try:
+                        self.controls[f'mouse_{event.button}'] = True
+                    except:
+                        0
+                if event.type == pygame.MOUSEBUTTONUP:
+                    try:
+                        self.controls[f'mouse_{event.button}'] = False
+                    except:
+                        0
 
             self.dt = time.time() - self.last_time
             self.dt *= 60
