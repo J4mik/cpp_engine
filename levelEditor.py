@@ -1,8 +1,8 @@
-import pygame, time, math
+import pygame, time, math, sys, os
 
 WIDTH = 1400
 HEIGHT = 800
-SCALE = 3
+SCALE = 1
 
 TILE_SIZE = 12
 TOTAL_TILE_SIZE = SCALE * TILE_SIZE
@@ -11,6 +11,8 @@ CHUNK_SIZE = 8
 LINE_WIDTH = 2
 
 tiles = [[2, 2]]
+
+pygame.init()
 
 class Editor:
     def __init__(self):
@@ -31,9 +33,13 @@ class Editor:
         self.mouse = pygame.Vector2(0, 0)
 
         self.block = pygame.image.load("data/images/blocks.png").convert_alpha()
+
+        self.click = False
     
-    def close():
+    def close(self):
         pygame.quit()
+        sys.exit()
+        self.running = False
 
     def update(self):
 
@@ -116,18 +122,14 @@ class Editor:
                         self.controls['up'] = False
                     if event.key == pygame.K_DOWN:
                         self.controls['down'] = False
+                    if event.key == pygame.K_r:
+                        pass
                 if event.type == pygame.WINDOWRESIZED:
                     self.screen = pygame.Surface((self.display.get_width(), self.display.get_height()))
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    try:
-                        self.controls[f'mouse_{event.button}'] = True
-                    except:
-                        0
+                    self.controls[f'mouse_{event.button}'] = True
                 if event.type == pygame.MOUSEBUTTONUP:
-                    try:
-                        self.controls[f'mouse_{event.button}'] = False
-                    except:
-                        0
+                    self.controls[f'mouse_{event.button}'] = False
 
             self.dt = time.time() - self.last_time
             self.dt *= 60
