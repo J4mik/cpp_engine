@@ -1,8 +1,9 @@
-import pygame, time, math, os, json
+import pygame, time, math, os, json, numpy
+from pathlib import Path
 
 WIDTH = 1400
 HEIGHT = 800
-SCALE = 2
+SCALE = 4
 
 TILE_SIZE = 12
 TOTAL_TILE_SIZE = SCALE * TILE_SIZE
@@ -36,6 +37,15 @@ class Editor:
         self.data = self.load("data/levels/blockData.json")["tiles"]
         self.temp_tile = self.data[0]["pos"]
         self.tileID = 0
+
+        # data = Path("src/data/number.bin").read_bytes()
+        # print(int.from_bytes(data[:8], byteorder='little', signed=False))
+
+        file = numpy.fromfile('src/data/number.bin', numpy.float64)
+        print(file[0])
+
+        array = [0, 4, 5]
+        array.astype('int16').tofile("data/levels/lvl1/level.bin")
 
     def load(self, path):
         with open(path, 'r') as f:
