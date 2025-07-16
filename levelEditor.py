@@ -1,4 +1,4 @@
-import pygame, time, math, os
+import pygame, time, math, os, json
 
 WIDTH = 1400
 HEIGHT = 800
@@ -10,7 +10,7 @@ CHUNK_SIZE = 8
 
 LINE_WIDTH = 2
 
-tiles = [[2, 2]]
+tiles = []
 
 pygame.init()
 
@@ -33,6 +33,17 @@ class Editor:
         self.mouse = pygame.Vector2(0, 0)
 
         self.block = pygame.image.load("data/images/blocks.png").convert_alpha()
+        self.data = self.load("data/levels/blockData.json")["tiles"]
+        self.temp_tile = self.data[0]["pos"]
+        self.tileID = 0
+
+    def load(self, path):
+        with open(path, 'r') as f:
+            data = json.load(f)
+            return(data)
+        
+    def save(self, data, path):
+        pass
     
     def close(self):
         pygame.quit()
@@ -53,7 +64,8 @@ class Editor:
         self.draw_tile_grid([CHUNK_SIZE * (TOTAL_TILE_SIZE + LINE_WIDTH), CHUNK_SIZE * (TOTAL_TILE_SIZE + LINE_WIDTH)], (50, 25, 35))
         self.draw_tile_grid([10000000, 10000000], (35, 45, 70))
         for i in range(len(tiles)):
-            self.draw([tiles[i][0], tiles[i][1]], pygame.transform.chop(self.block, (12, 0, 12, 36)))
+            self.draw([tiles[i][0], tiles[i][1]], self.clip(self.block, 
+                                (self.data[tiles[i][2]]["pos"][0], self.data[tiles[i][2]]["pos"][1], TILE_SIZE, TILE_SIZE)))
 
         self.draw_cursor()
         
@@ -62,7 +74,8 @@ class Editor:
                               -(self.mouse.y + self.render_scroll[1]) % (TOTAL_TILE_SIZE + LINE_WIDTH) - TOTAL_TILE_SIZE + self.mouse.y]
         if self.controls['mouse_3'] != True:
             self.rect = pygame.Rect(self.temp_tile_pos[0], self.temp_tile_pos[1], TOTAL_TILE_SIZE, TOTAL_TILE_SIZE)
-            self.screen.blit(pygame.transform.scale(pygame.transform.chop(self.block, (12, 0, 12, 36)), (TOTAL_TILE_SIZE, TOTAL_TILE_SIZE)), self.rect)
+            self.screen.blit(pygame.transform.scale(self.clip(self.block, (self.temp_tile[0], self.temp_tile[1], TILE_SIZE, TILE_SIZE)), 
+                                                    (TOTAL_TILE_SIZE, TOTAL_TILE_SIZE)), self.rect)
         
         if self.controls['mouse_1'] != True:
             self.surface = pygame.Surface((TOTAL_TILE_SIZE, TOTAL_TILE_SIZE))
@@ -73,16 +86,18 @@ class Editor:
             self.temp_tile_pos = [math.floor((self.mouse.x + self.render_scroll[0] - LINE_WIDTH * 0.5) / (TOTAL_TILE_SIZE + LINE_WIDTH)), 
                                  -math.floor((self.mouse.y + self.render_scroll[1] - LINE_WIDTH * 0.5) / (TOTAL_TILE_SIZE + LINE_WIDTH)) - 1]
             for i in range(len(tiles)):
-                if tiles[i] == self.temp_tile_pos:
-                    return(0)
-            tiles.append(self.temp_tile_pos)
+                if tiles[i][0] == self.temp_tile_pos[0] and tiles[i][1] == self.temp_tile_pos[1]:
+                    tiles[i] = [self.temp_tile_pos[0], self.temp_tile_pos[1], self.tileID]
+                    return
+            tiles.append([self.temp_tile_pos[0], self.temp_tile_pos[1], self.tileID])
         self.temp_tile_pos = [math.floor((self.mouse.x + self.render_scroll[0] - LINE_WIDTH * 0.5) / (TOTAL_TILE_SIZE + LINE_WIDTH)), 
                              -math.floor((self.mouse.y + self.render_scroll[1] - LINE_WIDTH * 0.5) / (TOTAL_TILE_SIZE + LINE_WIDTH)) - 1]
         if self.controls['mouse_3'] == True:
-            try:
-                tiles.remove(self.temp_tile_pos)
-            except:
-                0
+            for i in range(len(tiles)):
+                if tiles[i][0] == self.temp_tile_pos[0] and tiles[i][1] == self.temp_tile_pos[1]:
+                    tiles.pop(i)
+                    return
+
 
     def draw_tile_grid(self, tile_size: list | tuple, color):
         length = math.ceil(self.screen.get_width() / tile_size[0]) + 2
@@ -92,7 +107,14 @@ class Editor:
                              ((x - 1) * tile_size[0] - (self.render_scroll[0] % tile_size[0]), self.screen.get_height()), width=LINE_WIDTH)
         for y in range(height):
             pygame.draw.line(self.screen, color, (0, (y - 1) * tile_size[1] - (self.render_scroll[1] % tile_size[1])), 
-                             (self.screen.get_width(), (y - 1) * tile_size[1] - (self.render_scroll[1] % tile_size[1])), width=LINE_WIDTH)
+                            (self.screen.get_width(), (y - 1) * tile_size[1] - (self.render_scroll[1] % tile_size[1])), width=LINE_WIDTH)
+
+    def clip(self, surface: pygame.Surface, clip_rect: pygame.Rect) -> pygame.Surface:
+        surf = pygame.Surface((clip_rect[2], clip_rect[3]))
+        surf.fill((0, 0, 0))
+        surf.set_colorkey((0, 0, 0))
+        surf.blit(surface, (-clip_rect[0], -clip_rect[1]))
+        return(surf)
 
     def draw(self, pos, image):
         pos[1] += 1
@@ -134,6 +156,19 @@ class Editor:
                 if event.type == pygame.WINDOWRESIZED:
                     self.screen = pygame.Surface((self.display.get_width(), self.display.get_height()))
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 4:
+                        try:
+                            self.temp_tile = self.data[self.tileID + 1]["pos"]
+                            self.tileID += 1
+                        except:
+                            pass
+                    elif event.button == 5:
+                        try:
+                            if self.tileID > 0:
+                                self.temp_tile = self.data[self.tileID - 1]["pos"]
+                                self.tileID -= 1
+                        except:
+                            pass
                     self.controls[f'mouse_{event.button}'] = True
                 if event.type == pygame.MOUSEBUTTONUP:
                     self.controls[f'mouse_{event.button}'] = False
