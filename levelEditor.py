@@ -3,7 +3,7 @@ from pathlib import Path
 
 WIDTH = 1400
 HEIGHT = 800
-SCALE = 4
+SCALE = 2
 
 TILE_SIZE = 12
 TOTAL_TILE_SIZE = SCALE * TILE_SIZE
@@ -35,6 +35,7 @@ class Editor:
 
         self.block = pygame.image.load("data/images/blocks.png").convert_alpha()
         self.data = self.load("data/levels/blockData.json")["tiles"]
+        print(tiles)
         self.temp_tile = self.data[0]["pos"]
         self.tileID = 0
 
@@ -46,20 +47,22 @@ class Editor:
 
         # self.tile_struct = numpy.dtype([("x", numpy.int16), ("y", numpy.int16), ("type", numpy.int8)])
 
-        array = numpy.array([(3, 2, 1), (1486, 4456, 24)])
-        numpy.astype(array, numpy.int16).tofile("data/levels/lvl1/level.bin")
+        # array = numpy.array([(3, 2, 1), (1, 4, 2)])
+        # numpy.astype(array, numpy.int16).tofile("data/levels/lvl1/level.bin")
 
     def load(self, path):
+        file = numpy.fromfile('data/levels/lvl1/level.bin', [("x", numpy.int16), ("y", numpy.int16), ("type", numpy.int16)])
+        for i in range(len(file)):
+            tiles.append([int(file[i][0]), int(file[i][1]), int(file[i][2])])
         with open(path, 'r') as f:
             data = json.load(f)
-            file = numpy.fromfile('data/levels/lvl1/level.bin', [("x", numpy.int16), ("y", numpy.int16), ("type", numpy.int16)])
-            tiles.append(file[0])
-            print(file[0])
             return(data)
 
         
     def save(self, data, path):
-        pass
+        # temp = data.ravel()
+        new = numpy.array(sum(data, []))
+        numpy.astype(new, numpy.int16).tofile(path)
     
     def close(self):
         pygame.quit()
@@ -86,6 +89,9 @@ class Editor:
         self.draw_cursor()
         
     def draw_cursor(self):
+        if self.controls['mouse_1'] == True or self.controls['mouse_1'] == True:
+            self.save(tiles, "data/levels/lvl1/level.bin")
+
         self.temp_tile_pos = [-(self.mouse.x + self.render_scroll[0]) % (TOTAL_TILE_SIZE + LINE_WIDTH) - TOTAL_TILE_SIZE + self.mouse.x, 
                               -(self.mouse.y + self.render_scroll[1]) % (TOTAL_TILE_SIZE + LINE_WIDTH) - TOTAL_TILE_SIZE + self.mouse.y]
         if self.controls['mouse_3'] != True:
