@@ -39,6 +39,14 @@ class Editor:
         self.temp_tile = self.data[0]["pos"]
         self.tileID = 0
 
+        pygame.font.init()
+
+
+        self.byteBounce = pygame.font.Font("data/fonts/ByteBounce.ttf", 30)
+        self.text_surface = self.byteBounce.render(self.data[self.tileID]['type'], False, (255, 255, 255))
+
+
+
         # data = Path("src/data/number.bin").read_bytes()
         # print(int.from_bytes(data[:8], byteorder='little', signed=False))
 
@@ -87,6 +95,7 @@ class Editor:
                                 (self.data[tiles[i][2]]["pos"][0], self.data[tiles[i][2]]["pos"][1], TILE_SIZE, TILE_SIZE)))
 
         self.draw_cursor()
+        self.screen.blit(self.text_surface, (10, 0))
         
     def draw_cursor(self):
         if self.controls['mouse_1'] == True or self.controls['mouse_1'] == True:
@@ -191,6 +200,8 @@ class Editor:
                                 self.tileID -= 1
                         except:
                             pass
+                    self.text_surface = self.byteBounce.render(self.data[self.tileID]['type'], False, (255, 255, 255))
+                    
                     self.controls[f'mouse_{event.button}'] = True
                 if event.type == pygame.MOUSEBUTTONUP:
                     self.controls[f'mouse_{event.button}'] = False
