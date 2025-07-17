@@ -41,16 +41,22 @@ class Editor:
         # data = Path("src/data/number.bin").read_bytes()
         # print(int.from_bytes(data[:8], byteorder='little', signed=False))
 
-        file = numpy.fromfile('src/data/number.bin', numpy.float64)
-        print(file[0])
+        # file = numpy.fromfile('data/levels/lvl1/level.bin', numpy.float64)
+        # print(file[0])
 
-        array = [0, 4, 5]
-        array.astype('int16').tofile("data/levels/lvl1/level.bin")
+        # self.tile_struct = numpy.dtype([("x", numpy.int16), ("y", numpy.int16), ("type", numpy.int8)])
+
+        array = numpy.array([(3, 2, 1), (1486, 4456, 24)])
+        numpy.astype(array, numpy.int16).tofile("data/levels/lvl1/level.bin")
 
     def load(self, path):
         with open(path, 'r') as f:
             data = json.load(f)
+            file = numpy.fromfile('data/levels/lvl1/level.bin', [("x", numpy.int16), ("y", numpy.int16), ("type", numpy.int16)])
+            tiles.append(file[0])
+            print(file[0])
             return(data)
+
         
     def save(self, data, path):
         pass
