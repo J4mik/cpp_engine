@@ -1,5 +1,6 @@
 import pygame, time, math, os, json, numpy
-from pathlib import Path
+from tkinter import filedialog
+# from pathlib import Path
 
 WIDTH = 1400
 HEIGHT = 800
@@ -14,6 +15,9 @@ LINE_WIDTH = 2
 tiles = []
 
 pygame.init()
+
+file = filedialog.askdirectory() + "/level.bin"
+print(file)
 
 class Editor:
     def __init__(self):
@@ -35,33 +39,18 @@ class Editor:
 
         self.block = pygame.image.load("data/images/blocks.png").convert_alpha()
         self.data = self.load("data/levels/blockData.json")["tiles"]
-        print(tiles)
         self.temp_tile = self.data[0]["pos"]
         self.tileID = 0
 
         pygame.font.init()
 
-
         self.byteBounce = pygame.font.Font("data/fonts/ByteBounce.ttf", 30)
         self.text_surface = self.byteBounce.render(self.data[self.tileID]['type'], False, (255, 255, 255))
 
-
-
-        # data = Path("src/data/number.bin").read_bytes()
-        # print(int.from_bytes(data[:8], byteorder='little', signed=False))
-
-        # file = numpy.fromfile('data/levels/lvl1/level.bin', numpy.float64)
-        # print(file[0])
-
-        # self.tile_struct = numpy.dtype([("x", numpy.int16), ("y", numpy.int16), ("type", numpy.int8)])
-
-        # array = numpy.array([(3, 2, 1), (1, 4, 2)])
-        # numpy.astype(array, numpy.int16).tofile("data/levels/lvl1/level.bin")
-
     def load(self, path):
-        file = numpy.fromfile('data/levels/lvl1/level.bin', [("x", numpy.int16), ("y", numpy.int16), ("type", numpy.int16)])
-        for i in range(len(file)):
-            tiles.append([int(file[i][0]), int(file[i][1]), int(file[i][2])])
+        jsonFile = numpy.fromfile(file, [("x", numpy.int16), ("y", numpy.int16), ("type", numpy.int16)])
+        for i in range(len(jsonFile)):
+            tiles.append([int(jsonFile[i][0]), int(jsonFile[i][1]), int(jsonFile[i][2])])
         with open(path, 'r') as f:
             data = json.load(f)
             return(data)
@@ -99,7 +88,7 @@ class Editor:
         
     def draw_cursor(self):
         if self.controls['mouse_1'] == True or self.controls['mouse_1'] == True:
-            self.save(tiles, "data/levels/lvl1/level.bin")
+            self.save(tiles, file)
 
         self.temp_tile_pos = [-(self.mouse.x + self.render_scroll[0]) % (TOTAL_TILE_SIZE + LINE_WIDTH) - TOTAL_TILE_SIZE + self.mouse.x, 
                               -(self.mouse.y + self.render_scroll[1]) % (TOTAL_TILE_SIZE + LINE_WIDTH) - TOTAL_TILE_SIZE + self.mouse.y]
