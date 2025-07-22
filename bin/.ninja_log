@@ -1,7 +1,5 @@
 # ninja log v6
-21	631	7738817973343171	CMakeFiles/Defblade.dir/main.cpp.obj	73d55937ab1bdf87
-631	710	7738817979469131	Defblade.exe	2b8df12466d991d
+21	617	7746603594437616	CMakeFiles/Defblade.dir/main.cpp.obj	73d55937ab1bdf87
+617	694	7746603600352174	Defblade.exe	2b8df12466d991d
 40	283	7642820934101390	CMakeFiles/Defblade.dir/src/tiles.cpp.obj	7c80ada489b2ee9f
 25	955	7722916362571433	CMakeFiles/main.dir/main.cpp.obj	779f4746ab984be2
-65	3005	7739311239286441	CMakeFiles/Defblade.dir/main.cpp.obj	e092f41af8d69296
-3007	3784	7739311268741439	Defblade.exe	edbddf468f71ec2

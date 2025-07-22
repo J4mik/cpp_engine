@@ -1,15 +1,14 @@
-#include <iostream>
-#include <fstream>
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
 
+#include "level.hpp"
+
 uint64_t lastTick;
 uint16_t deltaTime;
 
-uint32_t tempFloat = 3245717;
-uint32_t newFloat;
+// uint32_t tempFloat = 3245717;
+// uint32_t newFloat;
 
 struct {
 	int w = 1000;
