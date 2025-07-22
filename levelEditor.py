@@ -21,10 +21,13 @@ print(file)
 
 class Editor:
     def __init__(self):
+
+        print(pygame.display.Info())
+
         self.screen = pygame.Surface((WIDTH, HEIGHT))
         self.display = pygame.display.set_mode((WIDTH, HEIGHT), flags=pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
-
+        
         self.dt = 1
         self.last_time = time.time() - 1/60
 
@@ -162,6 +165,8 @@ class Editor:
                         self.controls['up'] = True
                     if event.key == pygame.K_DOWN:
                         self.controls['down'] = True
+                    if event.key == pygame.K_F11:
+                        pygame.display.toggle_fullscreen()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
                         self.controls['left'] = False

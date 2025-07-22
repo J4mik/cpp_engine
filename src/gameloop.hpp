@@ -50,6 +50,7 @@ void game() {
 
     sprite player;
 
+    file::read("data/levels/lvl/level.bin");
 
     while (running) {
         SDL_GetWindowSizeInPixels(win, &screen.w, &screen.h);
