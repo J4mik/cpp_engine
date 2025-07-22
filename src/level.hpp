@@ -9,11 +9,11 @@ namespace file {
     
     void read(std::basic_string<char> path) {
         
-       std::ifstream inputFileStream;
+        std::ifstream inputFileStream;
         inputFileStream.open(path, std::ios::in|std::ios::binary);
-        inputFileStream.seekg(0, fstream::end);
-        inputFileStream.seekg(0, fstream::beg);
-        int16_t tiles[inputFileStream.tellg()] = {};
+        inputFileStream.seekg(0, std::ifstream::end);
+        int16_t tiles[int(inputFileStream.tellg())] = {};
+        inputFileStream.seekg(0, std::ifstream::beg);
         while (true) {
             for (int i = 0; i < 3; ++i) {
                 counter = inputFileStream.tellg();
