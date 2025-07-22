@@ -158,9 +158,6 @@ class Editor:
                     self.running = False
                     self.close()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.running = False
-                        self.close()
                     if event.key == pygame.K_LEFT:
                         self.controls['left'] = True
                     if event.key == pygame.K_RIGHT:

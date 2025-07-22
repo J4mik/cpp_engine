@@ -3,7 +3,7 @@
 #include <cmath>
 #include <vector>
 
-// using namespace nlohmann;
+#define TILESIZE 24
 
 void game() {
     expDecay power{}; // initialises exponential decay to calculate player friction
@@ -50,23 +50,20 @@ void game() {
 
     sprite player;
 
-    file::read("data/levels/lvl/level.bin");
+    file reader;
+    reader.read("data/levels/lvl2/level.bin");
 
     while (running) {
         SDL_GetWindowSizeInPixels(win, &screen.w, &screen.h);
         SDL_RenderClear(rend);
         
         inputs();
-        temp.x = 0;
-        SDL_RenderCopy(rend, texture, &dirt, &temp);
-        temp.x = 48;
-        SDL_RenderCopy(rend, texture, &grass, &temp);
-        temp.x = 96;
-        SDL_RenderCopy(rend, texture, &path, &temp);
-        temp.x = 144;
-        SDL_RenderCopy(rend, texture, &sand, &temp);
-        temp.x = 192;
-        SDL_RenderCopy(rend, texture, &rock, &temp);
+
+        for (int i = 0; i < 20; ++i) {
+            temp.x = 20 * reader.tiles[i][0];
+            temp.y = 20 * reader.tiles[i][1];
+            SDL_RenderCopy(rend, texture, &dirt, &temp);
+        }
 
         playerPos.x = round(player.x);
         playerPos.y = round(player.y);
