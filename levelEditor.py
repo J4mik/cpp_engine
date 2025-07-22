@@ -16,8 +16,12 @@ tiles = []
 
 pygame.init()
 
-file = filedialog.askdirectory() + "/level.bin"
-print(file)
+file = filedialog.askdirectory()
+
+levelFile = file + "/level.bin"
+print(levelFile)
+configFile = file + "/levelConfig.json"
+print(configFile)
 
 class Editor:
     def __init__(self):
@@ -48,7 +52,7 @@ class Editor:
         self.text_surface = self.byteBounce.render(self.data[self.tileID]['type'], False, (255, 255, 255))
 
     def load(self, path):
-        jsonFile = numpy.fromfile(file, [("x", numpy.int16), ("y", numpy.int16), ("type", numpy.int16)])
+        jsonFile = numpy.fromfile(levelFile, [("x", numpy.int16), ("y", numpy.int16), ("type", numpy.int16)])
         for i in range(len(jsonFile)):
             tiles.append([int(jsonFile[i][0]), int(jsonFile[i][1]), int(jsonFile[i][2])])
         with open(path, 'r') as f:
@@ -87,8 +91,8 @@ class Editor:
         self.screen.blit(self.text_surface, (10, 0))
         
     def draw_cursor(self):
-        if self.controls['mouse_1'] == True or self.controls['mouse_1'] == True:
-            self.save(tiles, file)
+        if self.controls['mouse_1'] == True or self.controls['mouse_3'] == True:
+            self.save(tiles, levelFile)
 
         self.temp_tile_pos = [-(self.mouse.x + self.render_scroll[0]) % (TOTAL_TILE_SIZE + LINE_WIDTH) - TOTAL_TILE_SIZE + self.mouse.x, 
                               -(self.mouse.y + self.render_scroll[1]) % (TOTAL_TILE_SIZE + LINE_WIDTH) - TOTAL_TILE_SIZE + self.mouse.y]
