@@ -12,18 +12,19 @@ namespace file {
         std::ifstream inputFileStream;
         inputFileStream.open(path, std::ios::in|std::ios::binary);
         inputFileStream.seekg(0, std::ifstream::end);
-        int16_t tiles[int(inputFileStream.tellg())] = {};
+        counter = int(inputFileStream.tellg()) / 3;
+        int16_t tiles[counter] = {};
         inputFileStream.seekg(0, std::ifstream::beg);
-        while (true) {
-            for (int i = 0; i < 3; ++i) {
+        for (int i = counter; i > 0, --i) {
+            for (int j = 0; j < 3; ++j) {
                 counter = inputFileStream.tellg();
                 try {
                     inputFileStream.read((char*) &tile, 2); // if doesn't work try: sizeof(uint16_t) instead of 2
                     if (counter < inputFileStream.tellg()) {
-                        tiles[i] = tile;
+                        tiles[i][j] = tile;
                     }
                     else {
-                        std::cout << tiles[2];
+                        std::cout << "file length is not a factor of 48";
                         return;
                     }
                 }
