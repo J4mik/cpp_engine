@@ -237,6 +237,15 @@ Defblade_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 Defblade_SOURCE_DIR:STATIC=C:/Users/User/Desktop/cpp_engine
 
+//Value Computed by CMake
+Flashblade_BINARY_DIR:STATIC=C:/Users/User/Desktop/cpp_engine/bin
+
+//Value Computed by CMake
+Flashblade_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+Flashblade_SOURCE_DIR:STATIC=C:/Users/User/Desktop/cpp_engine
+
 
 ########################
 # INTERNAL cache entries

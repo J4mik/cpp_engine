@@ -1,6 +1,5 @@
 #include "engine.hpp"
 
-#include <cmath>
 #include <vector>
 
 #define TILESIZE 24
@@ -28,12 +27,7 @@ void game() {
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(rend, blocks);
 	SDL_Texture* playerSprite = SDL_CreateTextureFromSurface(rend, playerImage);
 
-    SDL_Rect temp;
-
-	temp.x = 0;
-	temp.y = 0;
-	temp.h = 48;
-	temp.w = 48;
+    SDL_Rect temp{0, 0, 48, 48};
 
     SDL_Rect playerPos{0, 0, 24, 36};
 
@@ -46,7 +40,8 @@ void game() {
     sprite player;
 
     file reader;
-    reader.read("data/levels/lvl2/level.bin");
+    reader.read("data/levels/lvl1/level.bin");
+    std::cout << reader.length;
 
     while (running) {
         SDL_GetWindowSizeInPixels(win, &screen.w, &screen.h);
@@ -55,9 +50,9 @@ void game() {
         inputs();
 
         for (int i = 0; i < reader.length; ++i) {
-            temp.x = 20 * reader.tiles[i][0];
-            temp.y = 20 * reader.tiles[i][1];
-            SDL_RenderCopy(rend, texture, &dirt, &temp);
+            temp.x = reader.tiles[i][0];
+            temp.y = reader.tiles[i][1];
+            SDL_RenderCopy(rend, texture, &grass, &temp);
         }
 
         playerPos.x = round(player.x);
