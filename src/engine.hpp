@@ -1,8 +1,5 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_timer.h>
-
 #include "level.hpp"
+#include "collisions.hpp"
 
 uint64_t lastTick;
 uint16_t deltaTime;
@@ -10,8 +7,8 @@ uint16_t deltaTime;
 struct {
 	int w = 1000;
 	int h = 600;
-	int32_t ofsetX;
-	int32_t ofsetY;
+	double ofsetX;
+	double ofsetY;
 } screen;
 
 class sprite {
