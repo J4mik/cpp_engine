@@ -8,6 +8,9 @@
 
 using namespace nlohmann;
 
+int tempNum;
+bool flag;
+
 void game() {
     expDecay power{}; // initialises exponential decay to calculate player friction
 
@@ -59,27 +62,62 @@ void game() {
         for (int i = 0; i < reader.length; ++i) {
             temp.x = tiles[i].x * TILESIZE - screen.ofsetX;
             temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY;
-            if (colidetect(temp, SDL_Rect{110, 110, screen.w, screen.h})) {
+            // if (colidetect(temp, SDL_Rect{110, 110, screen.w, screen.h})) {
                 clip = {tileData["tiles"][tiles[i].type]["pos"][0], tileData["tiles"][tiles[i].type]["pos"][1], 12, 12};
                 SDL_RenderCopy(rend, texture, &clip, &temp);
-            }
+            // }
         }
 
         playerPos.x = round((screen.w - playerPos.w) / 2 + player.x - screen.ofsetX);
         playerPos.y = round((screen.h - playerPos.h) / 2 + player.y - screen.ofsetY);
         SDL_RenderCopyEx(rend, playerSprite, NULL, &playerPos, 0, 0, (player.flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE));
 
-        player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * (power.sqr(deltaTime) + 1) * deltaTime * SPEED; // player movement & integral to account for friction
-        player.VectY += ((key.s || key.downArrow) - (key.w || key.upArrow)) * (power.sqr(deltaTime) + 1) * deltaTime * SPEED;
+        
         if (abs((key.d || key.rightArrow) - (key.a || key.leftArrow)) + abs((key.s || key.downArrow) - (key.w || key.upArrow)) == 2) {
-            player.x += player.VectX * (power.sqr(deltaTime * 1.4) + 1) * deltaTime / 1000; // integral to ensure same descelaration at all framerates
-            player.y += player.VectY * (power.sqr(deltaTime * 1.4) + 1) * deltaTime / 1000;
+            player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * (power.sqr(deltaTime) + 1) * deltaTime * SPEED * 0.8; // player movement & integral to account for friction
+            player.VectY += ((key.s || key.downArrow) - (key.w || key.upArrow)) * (power.sqr(deltaTime) + 1) * deltaTime * SPEED * 0.8;
         }
         else {
-            player.x += player.VectX * (power.sqr(deltaTime) + 1) * deltaTime / 1000; // integral to ensure same speed at all framerates
-            player.y += player.VectY * (power.sqr(deltaTime) + 1) * deltaTime / 1000;
+            player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * (power.sqr(deltaTime) + 1) * deltaTime * SPEED; // player movement & integral to account for friction
+            player.VectY += ((key.s || key.downArrow) - (key.w || key.upArrow)) * (power.sqr(deltaTime) + 1) * deltaTime * SPEED;
         }
 
+        flag = 0;
+        for (int i = 0; i < reader.length; ++i) {
+            temp.x = tiles[i].x * TILESIZE - screen.ofsetX;
+            temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY;
+            if (colidetect(SDL_Rect{playerPos.x + int(player.VectX * deltaTime / 1000), playerPos.y, playerPos.w, playerPos.h}, temp)) {
+                if (abs(playerPos.x - temp.x) > abs(playerPos.x + player.VectX * deltaTime / 1000 - temp.x)) {
+                    flag = 1;
+                    break;
+                }
+            }
+        }
+        if (!flag) {
+            player.x += player.VectX * (power.sqr(deltaTime) + 1) * deltaTime / 1000; // integral to ensure same speed at all framerates
+        }
+        else {
+            player.VectX = 0;
+        }
+
+        flag = 0;
+        for (int i = 0; i < reader.length; ++i) {
+            temp.x = tiles[i].x * TILESIZE - screen.ofsetX;
+            temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY;
+            if (colidetect(SDL_Rect{playerPos.x, playerPos.y + int(player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
+                if (abs(playerPos.y - temp.y) > abs(playerPos.y + player.VectY * deltaTime / 1000 - temp.y)) {
+                    flag = 1;
+                    break;
+                }
+            }
+        }
+        if (!flag) {
+            player.y += player.VectY * (power.sqr(deltaTime) + 1) * deltaTime / 1000; // integral to ensure same speed at all framerates
+        }
+        else {
+            player.VectY = 0;
+        }
+    
         screen.ofsetX -= (screen.ofsetX - player.x) * (1 - power.sqr(deltaTime));
         screen.ofsetY -= (screen.ofsetY - player.y) * (1 - power.sqr(deltaTime));
 
