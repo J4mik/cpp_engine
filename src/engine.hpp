@@ -27,6 +27,7 @@ struct {
 	bool a;
 	bool s;
 	bool d;
+	bool r;
 	bool upArrow;
 	bool leftArrow;
 	bool downArrow;
@@ -117,6 +118,10 @@ void inputs() {
 						key.d = 1;
 						break;
 
+					case SDLK_r:
+						key.r = 1;
+						break;
+
 					case SDLK_UP:
 						key.upArrow = 1;
 						break;
@@ -144,6 +149,10 @@ void inputs() {
 						break;
 					case SDLK_d:
 						key.d = 0;
+						break;
+
+					case SDLK_r:
+						key.r = 0;
 						break;
 
 					case SDLK_UP:
