@@ -4,7 +4,7 @@
 #include <vector>
 
 #define TILESIZE 36
-#define SPEED 0.7
+#define SPEED 1.3
 
 using namespace nlohmann;
 
@@ -46,7 +46,7 @@ void game() {
 
     sprite player;
     player.y = -600;
-    player.x = -900;
+    player.x = -1100;
 
     file reader;
     tile tiles[reader.load("data/levels/lvl2/level.bin", 6)];
@@ -78,53 +78,26 @@ void game() {
         
         player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * (power.sqr(deltaTime) + 1) * deltaTime * SPEED; // player movement & integral to account for friction
         if (jump && (key.w || key.upArrow)) {
-            player.VectY = -325;
+            player.VectY = -600;
         }                
         jump = 0;
 
-        player.VectY += deltaTime;
+        player.VectY += deltaTime * 1.75;
 
         if (key.r) {
+            player.VectY = 0;
+            player.VectX = 0;
             player.y = -600;
-            player.x = -900;
-        }
-
-        for (int j = 0; j < reader.length; ++j) {
-            if (tiles[j].type == 5) {
-                temp.x = tiles[j].x * TILESIZE - screen.ofsetX;
-                temp.y = (1 - tiles[j].y) * TILESIZE - screen.ofsetY;
-                if (colidetect(playerPos, temp)) {
-                    player.VectY = 0;
-                    player.VectX = 0;
-                    player.y = -600;
-                    player.x = -900;
-                }
-            }
-            else if (colidetect(playerPos, temp)) {
-                for (int i = 1; i < TILESIZE; ++i) {
-                    if (!colidetect(SDL_Rect{playerPos.x + i, playerPos.y, playerPos.w + playerPos.h}, temp)) {
-                        playerPos.x += i;
-                    }
-                    if (!colidetect(SDL_Rect{playerPos.x - i, playerPos.y, playerPos.w + playerPos.h}, temp)) {
-                        playerPos.x -= i;
-                    }
-                    if (!colidetect(SDL_Rect{playerPos.x, playerPos.y + i, playerPos.w + playerPos.h}, temp)) {
-                        playerPos.y += i;
-                    }
-                    if (!colidetect(SDL_Rect{playerPos.x, playerPos.y - i, playerPos.w + playerPos.h}, temp)) {
-                        playerPos.y -= i;
-                    }
-                }
-            }
+            player.x = -1100;
         }
 
         flag = 0;
         for (int i = 0; i < reader.length; ++i) {
-            if (tileData["tiles"][tiles[i].type]["collisions"]) {
+            if (tileData["tiles"][tiles[i].type]["collisions"] == true) {
                 temp.x = tiles[i].x * TILESIZE - screen.ofsetX;
                 temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY;
                 if (colidetect(SDL_Rect{playerPos.x + int(player.VectX * deltaTime / 1000), playerPos.y, playerPos.w, playerPos.h}, temp)) {
-                    if (abs(playerPos.x - temp.x) > abs(playerPos.x + player.VectX * deltaTime / 1000 - temp.x)) {
+                    // if (abs(playerPos.x - temp.x) > abs(playerPos.x + player.VectX * deltaTime / 1000 - temp.x)) {
                         if (!colidetect(SDL_Rect{playerPos.x + int(player.VectX * deltaTime / 1000), playerPos.y + 2, playerPos.w, playerPos.h}, temp)) {
                             flag = 0;
                         }
@@ -135,16 +108,18 @@ void game() {
                             flag = 1;
                             break;
                         }
-                    }
+                    // }
                 }
             }
         }
         if (!flag) {
-            player.x += player.VectX * (power.sqr(deltaTime) + 1) * deltaTime / 1000; // integral to ensure same speed at all framerates
+            player.x += player.VectX * deltaTime / 1000;
         }
         else {
             player.VectX = 0;
-        }
+        }        
+
+        playerPos.x = round((screen.w - playerPos.w) / 2 + player.x - screen.ofsetX);
 
         flag = 0;
         for (int i = 0; i < reader.length; ++i) {
@@ -152,11 +127,11 @@ void game() {
                 temp.x = tiles[i].x * TILESIZE - screen.ofsetX;
                 temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY;
                 if (colidetect(SDL_Rect{playerPos.x, playerPos.y + int(player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
-                    if (abs(playerPos.y - temp.y) > abs(playerPos.y + player.VectY * deltaTime / 1000 - temp.y)) {
-                        if (!colidetect(SDL_Rect{playerPos.x + 2, playerPos.y + int(player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
+                    // if (abs(playerPos.y - temp.y) > abs(playerPos.y + player.VectY * deltaTime / 1000 - temp.y)) {
+                        if (!colidetect(SDL_Rect{playerPos.x + 1, playerPos.y + int(player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
                             flag = 0;
                         }
-                        else if (!colidetect(SDL_Rect{playerPos.x - 2, playerPos.y + int(player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
+                        else if (!colidetect(SDL_Rect{playerPos.x - 1, playerPos.y + int(player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
                             flag = 0;
                         }
                         else {
@@ -166,16 +141,60 @@ void game() {
                             }
                             break;
                         }
-                    }
+                    // }
                 }
             }
         }
         if (!flag) {
-            player.y += player.VectY * (power.sqr(deltaTime) + 1) * deltaTime / 1000; // integral to ensure same speed at all framerates
+            player.y += player.VectY * deltaTime / 1000;
         }
         else {
             player.VectY = 0;
         }
+
+        playerPos.y = round((screen.h - playerPos.h) / 2 + player.y - screen.ofsetY);
+
+        for (int j = 0; j < reader.length; ++j) {
+            temp.x = tiles[j].x * TILESIZE - screen.ofsetX;
+            temp.y = (1 - tiles[j].y) * TILESIZE - screen.ofsetY;
+            if (tiles[j].type == 5) {
+                if (colidetect(playerPos, temp)) {
+                    player.VectY = 0;
+                    player.VectX = 0;
+                    player.y = -600;
+                    player.x = -1100;
+                }
+            }
+        }
+
+
+        // for (int i = 0; i < reader.length; ++i) {
+        //     if (tileData["tiles"][tiles[i].type]["collisions"] && colidetect(playerPos, temp)) {
+        //         temp.x = tiles[i].x * TILESIZE - screen.ofsetX;
+        //         temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY;
+        //         for (int j = 0; j < 16; ++j) {
+        //             if (!colidetect(SDL_Rect{playerPos.x + j, playerPos.y, playerPos.h, playerPos.w}, temp)) {
+        //                 player.x += j;
+        //                 break;
+        //             }
+        //             if (!colidetect(SDL_Rect{playerPos.x - j, playerPos.y, playerPos.h, playerPos.w}, temp)) {
+        //                 player.x -= j;
+        //                 break;
+        //             }
+        //             if (!colidetect(SDL_Rect{playerPos.x, playerPos.y + j, playerPos.h, playerPos.w}, temp)) {
+        //                 player.y += j;
+        //                 break;
+        //             }
+        //             if (!colidetect(SDL_Rect{playerPos.x, playerPos.y - j, playerPos.h, playerPos.w}, temp)) {
+        //                 player.y -= j;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }
+
+        playerPos.x = round((screen.w - playerPos.w) / 2 + player.x - screen.ofsetX);
+        playerPos.y = round((screen.h - playerPos.h) / 2 + player.y - screen.ofsetY);
     
         screen.ofsetX -= (screen.ofsetX - player.x) * (1 - power.sqr(deltaTime));
         screen.ofsetY -= (screen.ofsetY - player.y) * (1 - power.sqr(deltaTime));
@@ -192,6 +211,6 @@ void game() {
         
         SDL_RenderPresent(rend);
 
-        SDL_Delay(1);
+        // SDL_Delay(1);
     }
 }
