@@ -7,7 +7,7 @@ set(CMAKE_CPP_COMPILER g++)
 set(CMAKE_MAKE_PROGRAM ninja)
 
 # for release
-# set(CMAKE_CXX_FLAGS -mwindows)
+set(CMAKE_CXX_FLAGS -mwindows)
 
 # sources
 set(SOURCES main.cpp)# src/tiles.cpp)

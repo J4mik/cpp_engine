@@ -46,6 +46,7 @@ build cmake_object_order_depends_target_Defblade: phony || .
 
 build CMakeFiles/Defblade.dir/main.cpp.obj: CXX_COMPILER__Defblade_unscanned_ C$:/Users/User/Desktop/cpp_engine/main.cpp || cmake_object_order_depends_target_Defblade
   DEP_FILE = CMakeFiles\Defblade.dir\main.cpp.obj.d
+  FLAGS = -mwindows
   INCLUDES = -IC:/Users/User/Desktop/cpp_engine/include
   OBJECT_DIR = CMakeFiles\Defblade.dir
   OBJECT_FILE_DIR = CMakeFiles\Defblade.dir
@@ -59,6 +60,7 @@ build CMakeFiles/Defblade.dir/main.cpp.obj: CXX_COMPILER__Defblade_unscanned_ C$
 # Link the executable Defblade.exe
 
 build Defblade.exe: CXX_EXECUTABLE_LINKER__Defblade_ CMakeFiles/Defblade.dir/main.cpp.obj
+  FLAGS = -mwindows
   LINK_LIBRARIES = -lmingw32  -lSDL2main  -lSDL2  -lSDL2_image  -lSDL2_mixer  -lSDL2_ttf  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   LINK_PATH = -LC:/Users/User/Desktop/cpp_engine/lib
   OBJECT_DIR = CMakeFiles\Defblade.dir
