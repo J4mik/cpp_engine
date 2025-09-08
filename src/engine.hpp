@@ -171,6 +171,12 @@ void inputs() {
 			}
         }
     
-	deltaTime = SDL_GetTicks64() - lastTick;
+	
+	if ((SDL_GetTicks64() - lastTick) < 512) {
+		deltaTime = SDL_GetTicks64() - lastTick;
+	}
+	else {
+		deltaTime = 0;
+	}
 	lastTick = SDL_GetTicks64();
 }

@@ -1,6 +1,8 @@
 #include "engine.hpp"
 #include "../include/JSON/json.hpp"
 
+#include <iostream>
+
 #include <vector>
 
 #define TILESIZE 36
@@ -11,6 +13,13 @@ using namespace nlohmann;
 int tempNum;
 bool flag;
 bool jump;
+
+void reset(sprite (&players)) {
+    players.x = -600;
+    players.y = -300;
+    players.VectX = 0;
+    players.VectY = 0;
+}
 
 void game() {
     expDecay power{}; // initialises exponential decay to calculate player friction
@@ -44,9 +53,7 @@ void game() {
 
     SDL_Rect clip{0, 0, 12, 12};
 
-    sprite player;
-    player.y = -600;
-    player.x = -1100;
+    
 
     file reader;
     tile tiles[reader.load("data/levels/lvl2/level.bin", 6)];
@@ -56,6 +63,9 @@ void game() {
     //     std::cout << "[" << tiles[i].x << ", " << tiles[i].y << ", " << tiles[i].type << "]\n";
     // } // debuging in file reader
 
+    sprite player;
+    reset(player);
+
     while (running) {
         SDL_GetWindowSizeInPixels(win, &screen.w, &screen.h);
         SDL_RenderClear(rend);
@@ -63,8 +73,8 @@ void game() {
         inputs();
 
         for (int i = 0; i < reader.length; ++i) {
-            temp.x = tiles[i].x * TILESIZE - screen.ofsetX;
-            temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY;
+            temp.x = tiles[i].x * TILESIZE - screen.ofsetX + screen.w / 2;
+            temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY + screen.h / 2;
             // if (colidetect(temp, SDL_Rect{110, 110, screen.w, screen.h})) {
                 clip = {tileData["tiles"][tiles[i].type]["pos"][0], tileData["tiles"][tiles[i].type]["pos"][1], 12, 12};
                 SDL_RenderCopy(rend, texture, &clip, &temp);
@@ -85,30 +95,17 @@ void game() {
         player.VectY += deltaTime * 1.75;
 
         if (key.r) {
-            player.VectY = 0;
-            player.VectX = 0;
-            player.y = -600;
-            player.x = -1100;
+           reset(player);
         }
 
         flag = 0;
         for (int i = 0; i < reader.length; ++i) {
             if (tileData["tiles"][tiles[i].type]["collisions"] == true) {
-                temp.x = tiles[i].x * TILESIZE - screen.ofsetX;
-                temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY;
-                if (colidetect(SDL_Rect{playerPos.x + int(player.VectX * deltaTime / 1000), playerPos.y, playerPos.w, playerPos.h}, temp)) {
-                    // if (abs(playerPos.x - temp.x) > abs(playerPos.x + player.VectX * deltaTime / 1000 - temp.x)) {
-                        if (!colidetect(SDL_Rect{playerPos.x + int(player.VectX * deltaTime / 1000), playerPos.y + 2, playerPos.w, playerPos.h}, temp)) {
-                            flag = 0;
-                        }
-                        else if (!colidetect(SDL_Rect{playerPos.x + int(player.VectX * deltaTime / 1000), playerPos.y - 2, playerPos.w, playerPos.h}, temp)) {
-                            flag = 0;
-                        }
-                        else {
-                            flag = 1;
-                            break;
-                        }
-                    // }
+                temp.x = tiles[i].x * TILESIZE;
+                temp.y = (1 - tiles[i].y) * TILESIZE;
+                if (colidetect(SDL_Rect{int((-playerPos.w) / 2 + player.x + player.VectX * deltaTime / 1000), int((-playerPos.h) / 2 + player.y), playerPos.w, playerPos.h}, temp)) {
+                    flag = 1;
+                    break;
                 }
             }
         }
@@ -119,29 +116,17 @@ void game() {
             player.VectX = 0;
         }        
 
-        playerPos.x = round((screen.w - playerPos.w) / 2 + player.x - screen.ofsetX);
-
         flag = 0;
         for (int i = 0; i < reader.length; ++i) {
             if (tileData["tiles"][tiles[i].type]["collisions"]) {
-                temp.x = tiles[i].x * TILESIZE - screen.ofsetX;
-                temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY;
-                if (colidetect(SDL_Rect{playerPos.x, playerPos.y + int(player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
-                    // if (abs(playerPos.y - temp.y) > abs(playerPos.y + player.VectY * deltaTime / 1000 - temp.y)) {
-                        if (!colidetect(SDL_Rect{playerPos.x + 1, playerPos.y + int(player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
-                            flag = 0;
-                        }
-                        else if (!colidetect(SDL_Rect{playerPos.x - 1, playerPos.y + int(player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
-                            flag = 0;
-                        }
-                        else {
-                            flag = 1;
-                            if (player.VectY >= 0) {
-                                jump = 1;
-                            }
-                            break;
-                        }
-                    // }
+                temp.x = tiles[i].x * TILESIZE;
+                temp.y = (1 - tiles[i].y) * TILESIZE;
+                if (colidetect(SDL_Rect{int((-playerPos.w) / 2 + player.x), int((-playerPos.h) / 2 + player.y + player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
+                    flag = 1;
+                    if (player.VectY >= 0) {
+                        jump = 1;
+                    }
+                    break;
                 }
             }
         }
@@ -152,49 +137,16 @@ void game() {
             player.VectY = 0;
         }
 
-        playerPos.y = round((screen.h - playerPos.h) / 2 + player.y - screen.ofsetY);
-
         for (int j = 0; j < reader.length; ++j) {
-            temp.x = tiles[j].x * TILESIZE - screen.ofsetX;
-            temp.y = (1 - tiles[j].y) * TILESIZE - screen.ofsetY;
+            temp.x = tiles[j].x * TILESIZE;
+            temp.y = (1 - tiles[j].y) * TILESIZE;
             if (tiles[j].type == 5) {
-                if (colidetect(playerPos, temp)) {
-                    player.VectY = 0;
-                    player.VectX = 0;
-                    player.y = -600;
-                    player.x = -1100;
+                if (colidetect(SDL_Rect{round((-playerPos.w) / 2 + player.x), round((-playerPos.h) / 2 + player.y), playerPos.w, playerPos.h}, temp)) {
+                    reset(player);
                 }
             }
         }
 
-
-        // for (int i = 0; i < reader.length; ++i) {
-        //     if (tileData["tiles"][tiles[i].type]["collisions"] && colidetect(playerPos, temp)) {
-        //         temp.x = tiles[i].x * TILESIZE - screen.ofsetX;
-        //         temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY;
-        //         for (int j = 0; j < 16; ++j) {
-        //             if (!colidetect(SDL_Rect{playerPos.x + j, playerPos.y, playerPos.h, playerPos.w}, temp)) {
-        //                 player.x += j;
-        //                 break;
-        //             }
-        //             if (!colidetect(SDL_Rect{playerPos.x - j, playerPos.y, playerPos.h, playerPos.w}, temp)) {
-        //                 player.x -= j;
-        //                 break;
-        //             }
-        //             if (!colidetect(SDL_Rect{playerPos.x, playerPos.y + j, playerPos.h, playerPos.w}, temp)) {
-        //                 player.y += j;
-        //                 break;
-        //             }
-        //             if (!colidetect(SDL_Rect{playerPos.x, playerPos.y - j, playerPos.h, playerPos.w}, temp)) {
-        //                 player.y -= j;
-        //                 break;
-        //             }
-        //         }
-        //     }
-        // }
-
-        playerPos.x = round((screen.w - playerPos.w) / 2 + player.x - screen.ofsetX);
-        playerPos.y = round((screen.h - playerPos.h) / 2 + player.y - screen.ofsetY);
     
         screen.ofsetX -= (screen.ofsetX - player.x) * (1 - power.sqr(deltaTime));
         screen.ofsetY -= (screen.ofsetY - player.y) * (1 - power.sqr(deltaTime));
