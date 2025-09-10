@@ -65,10 +65,10 @@ void game() {
     SDL_Rect clip{0, 0, 12, 12};
 
     file reader;
-    tile tiles[reader.load("data/levels/lvl2/level.bin", 6)];
+    tile tiles[reader.load(std::string(std::string("data/levels/lvl")+std::string("1")+std::string("/level.bin")), 6)];
     reader.read(tiles);
 
-    std::ifstream config("data/levels/lvl2/levelConfig.json");
+    std::ifstream config(std::string("data/levels/lvl")+std::string("1")+std::string("/levelConfig.json"));
     json configFile = json::parse(config);
 
     spawn.x = configFile["level"]["spawn"][0];
@@ -87,7 +87,7 @@ void game() {
             temp.x = tiles[i].x * TILESIZE - screen.ofsetX + screen.w / 2;
             temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY + screen.h / 2;
             // if (colidetect(temp, SDL_Rect{110, 110, screen.w, screen.h})) {
-                clip = {tileData["tiles"][tiles[i].type]["pos"][0], tileData["tiles"][tiles[i].type]["pos"][1], 12, 12};
+                clip = {tileData["tiles"][tiles[i].type]["pos"][0], tileData["tiles"][tiles[i].type]["pos"][1], TILESIZEINPIXELS, TILESIZEINPIXELS};
                 SDL_RenderCopy(rend, texture, &clip, &temp);
             // }
         }

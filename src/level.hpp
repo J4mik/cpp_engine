@@ -17,7 +17,7 @@ class file {
     std::ifstream inputFileStream;
     int16_t length;
     uint16_t fileSize;
-    int load(std::basic_string<char> path, uint16_t classSize) {
+    int load(std::string path, uint16_t classSize) {
         inputFileStream.open(path, std::ios::in|std::ios::binary);
         inputFileStream.seekg(0, std::fstream::end);
         fileSize = int(inputFileStream.tellg()) + 1;
