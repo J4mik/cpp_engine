@@ -6,7 +6,11 @@
 #include <vector>
 
 #define TILESIZE 36
+#define TILESIZEINPIXELS 12
 #define SPEED 1.3
+
+int SCALE = (TILESIZE / TILESIZEINPIXELS);
+
 
 using namespace nlohmann;
 
@@ -61,7 +65,7 @@ void game() {
     SDL_Rect clip{0, 0, 12, 12};
 
     file reader;
-    tile tiles[reader.load("data/levels/lvl1/level.bin", 6)];
+    tile tiles[reader.load("data/levels/lvl2/level.bin", 6)];
     reader.read(tiles);
 
     std::ifstream config("data/levels/lvl2/levelConfig.json");
@@ -147,10 +151,9 @@ void game() {
         for (int j = 0; j < reader.length; ++j) {
             if (tileData["tiles"][tiles[j].type]["damage"] == true) {
                 if (colidetect(SDL_Rect{round((-playerPos.w) / 2 + player.x), round((-playerPos.h) / 2 + player.y), playerPos.w, playerPos.h}, 
-                            SDL_Rect{tiles[j].x * TILESIZE + tileData["tiles"][tiles[j].type]["hitbox"][3] * 3, 
-                            (1 - tiles[j].y) * TILESIZE + tileData["tiles"][tiles[j].type]["hitbox"][0] * 3, 
-                            TILESIZE - (tileData["tiles"][tiles[j].type]["hitbox"][1] + tileData["tiles"][tiles[j].type]["hitbox"][3]) * 3,
-                            TILESIZE - (tileData["tiles"][tiles[j].type]["hitbox"][0] + tileData["tiles"][tiles[j].type]["hitbox"][2]) * 3})) {
+                            SDL_Rect{tiles[j].x * TILESIZE + int(tileData["tiles"][tiles[j].type]["hitbox"][0]) * SCALE, 
+                            (1 - tiles[j].y) * TILESIZE + int(tileData["tiles"][tiles[j].type]["hitbox"][1]) * SCALE, 
+                            int(tileData["tiles"][tiles[j].type]["hitbox"][2]) * SCALE, int(tileData["tiles"][tiles[j].type]["hitbox"][3]) * SCALE})) {
                     reset(player);
                 }
             }
