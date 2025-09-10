@@ -14,9 +14,16 @@ int tempNum;
 bool flag;
 bool jump;
 
+int lvl = 1;
+
+struct {
+    int x;
+    int y;
+} spawn;
+
 void reset(sprite (&players)) {
-    players.x = -600;
-    players.y = -300;
+    players.x = spawn.x;
+    players.y = spawn.y;
     players.VectX = 0;
     players.VectY = 0;
 }
@@ -53,15 +60,15 @@ void game() {
 
     SDL_Rect clip{0, 0, 12, 12};
 
-    
-
     file reader;
-    tile tiles[reader.load("data/levels/lvl2/level.bin", 6)];
+    tile tiles[reader.load("data/levels/lvl1/level.bin", 6)];
     reader.read(tiles);
 
-    // for (int i = 0; i < reader.length; ++i) {
-    //     std::cout << "[" << tiles[i].x << ", " << tiles[i].y << ", " << tiles[i].type << "]\n";
-    // } // debuging in file reader
+    std::ifstream config("data/levels/lvl2/levelConfig.json");
+    json configFile = json::parse(config);
+
+    spawn.x = configFile["level"]["spawn"][0];
+    spawn.y = configFile["level"]["spawn"][1];
 
     sprite player;
     reset(player);
@@ -138,10 +145,12 @@ void game() {
         }
 
         for (int j = 0; j < reader.length; ++j) {
-            temp.x = tiles[j].x * TILESIZE;
-            temp.y = (1 - tiles[j].y) * TILESIZE;
-            if (tiles[j].type == 5) {
-                if (colidetect(SDL_Rect{round((-playerPos.w) / 2 + player.x), round((-playerPos.h) / 2 + player.y), playerPos.w, playerPos.h}, temp)) {
+            if (tileData["tiles"][tiles[j].type]["damage"] == true) {
+                if (colidetect(SDL_Rect{round((-playerPos.w) / 2 + player.x), round((-playerPos.h) / 2 + player.y), playerPos.w, playerPos.h}, 
+                            SDL_Rect{tiles[j].x * TILESIZE + tileData["tiles"][tiles[j].type]["hitbox"][3] * 3, 
+                            (1 - tiles[j].y) * TILESIZE + tileData["tiles"][tiles[j].type]["hitbox"][0] * 3, 
+                            TILESIZE - (tileData["tiles"][tiles[j].type]["hitbox"][1] + tileData["tiles"][tiles[j].type]["hitbox"][3]) * 3,
+                            TILESIZE - (tileData["tiles"][tiles[j].type]["hitbox"][0] + tileData["tiles"][tiles[j].type]["hitbox"][2]) * 3})) {
                     reset(player);
                 }
             }
