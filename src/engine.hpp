@@ -81,7 +81,7 @@ class expDecay {
 					pow255[0] = 1;
 					FileStream.write((char*) &pow255[0], 8);
 					for (int i = 1; i < length; ++i) {
-						pow255[i] = pow255[i-1] * 127/128;
+						pow255[i] = pow255[i-1] * 190/192;
 						FileStream.write((char*) &pow255[i], 8);
 					}
 				}

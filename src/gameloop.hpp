@@ -7,10 +7,9 @@
 
 #define TILESIZE 36
 #define TILESIZEINPIXELS 12
-#define SPEED 1.3
+#define SPEED 1.8
 
 int SCALE = (TILESIZE / TILESIZEINPIXELS);
-
 
 using namespace nlohmann;
 
@@ -18,7 +17,7 @@ int tempNum;
 bool flag;
 bool jump;
 
-int lvl = 1;
+int lvl = 2;
 
 struct {
     int x;
@@ -65,10 +64,10 @@ void game() {
     SDL_Rect clip{0, 0, 12, 12};
 
     file reader;
-    tile tiles[reader.load(std::string(std::string("data/levels/lvl")+std::string("1")+std::string("/level.bin")), 6)];
+    tile tiles[reader.load(std::string(std::string("data/levels/lvl")+std::string(std::to_string(lvl))+std::string("/level.bin")), 6)];
     reader.read(tiles);
 
-    std::ifstream config(std::string("data/levels/lvl")+std::string("1")+std::string("/levelConfig.json"));
+    std::ifstream config(std::string("data/levels/lvl")+std::string(std::to_string(lvl))+std::string("/levelConfig.json"));
     json configFile = json::parse(config);
 
     spawn.x = configFile["level"]["spawn"][0];
@@ -103,7 +102,7 @@ void game() {
         }                
         jump = 0;
 
-        player.VectY += deltaTime * 1.75;
+        player.VectY += deltaTime * 1.8;
 
         if (key.r) {
            reset(player);
