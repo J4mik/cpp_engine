@@ -7,7 +7,7 @@
 
 #define TILESIZE 36
 #define TILESIZEINPIXELS 12
-#define SPEED 1.8
+#define SPEED 1.7
 
 int SCALE = (TILESIZE / TILESIZEINPIXELS);
 
@@ -16,8 +16,6 @@ using namespace nlohmann;
 int tempNum;
 bool flag;
 bool jump;
-
-int lvl = 2;
 
 struct {
     int x;
@@ -31,23 +29,17 @@ void reset(sprite (&players)) {
     players.VectY = 0;
 }
 
-void game() {
+bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
+    // std::vector vec{};
+    // vec.push_back(1);
     expDecay power{}; // initialises exponential decay to calculate player friction
 
     power.innit("src/data/number.bin");
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) == 1) {
-		std::cout << SDL_GetError;
-	}
-
     std::ifstream ifs("data/levels/blockData.json");
     json tileData = json::parse(ifs);
 
-	SDL_Window* win = SDL_CreateWindow("Flashblade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen.w, screen.h, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
-
     SDL_Texture* render;
-
-	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED); // | SDL_RENDERER_TARGETTEXTURE);
 
     SDL_Surface* blocks;
     SDL_Surface* playerImage;
@@ -65,7 +57,11 @@ void game() {
 
     file reader;
     tile tiles[reader.load(std::string(std::string("data/levels/lvl")+std::string(std::to_string(lvl))+std::string("/level.bin")), 6)];
+    if (reader.error){
+        return 0;
+    }
     reader.read(tiles);
+    reader.close();
 
     std::ifstream config(std::string("data/levels/lvl")+std::string(std::to_string(lvl))+std::string("/levelConfig.json"));
     json configFile = json::parse(config);
@@ -75,7 +71,7 @@ void game() {
 
     sprite player;
     reset(player);
-
+    inputs();
     while (running) {
         SDL_GetWindowSizeInPixels(win, &screen.w, &screen.h);
         SDL_RenderClear(rend);
@@ -98,7 +94,7 @@ void game() {
         
         player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * (power.sqr(deltaTime) + 1) * deltaTime * SPEED; // player movement & integral to account for friction
         if (jump && (key.w || key.upArrow)) {
-            player.VectY = -600;
+            player.VectY = -620;
         }                
         jump = 0;
 
@@ -158,6 +154,15 @@ void game() {
             }
         }
 
+        for (int j = 0; j < reader.length; ++j) {
+            if (tileData["tiles"][tiles[j].type]["portal"] == true) {
+                if (colidetect(SDL_Rect{round((-playerPos.w) / 2 + player.x), round((-playerPos.h) / 2 + player.y), playerPos.w, playerPos.h}, 
+                            SDL_Rect{tiles[j].x * TILESIZE, (1 - tiles[j].y) * TILESIZE, TILESIZE, TILESIZE})) {
+                    return(1);
+                }
+            }
+        }
+
     
         screen.ofsetX -= (screen.ofsetX - player.x) * (1 - power.sqr(deltaTime));
         screen.ofsetY -= (screen.ofsetY - player.y) * (1 - power.sqr(deltaTime));
@@ -176,4 +181,5 @@ void game() {
 
         // SDL_Delay(1);
     }
+    return(0);
 }
