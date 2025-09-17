@@ -5,17 +5,7 @@
 
 #include <vector>
 
-#define TILESIZE 36
-#define TILESIZEINPIXELS 12
-#define SPEED 1.7
-
-int SCALE = (TILESIZE / TILESIZEINPIXELS);
-
 using namespace nlohmann;
-
-int tempNum;
-bool flag;
-bool jump;
 
 struct {
     int x;
@@ -30,8 +20,21 @@ void reset(sprite (&players)) {
 }
 
 bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
-    // std::vector vec{};
-    // vec.push_back(1);
+    #define TILESIZE 36
+    #define TILESIZEINPIXELS 12
+    #define SPEED 1.7
+
+    int SCALE = (TILESIZE / TILESIZEINPIXELS);
+
+    int tempNum;
+    bool flag;
+    bool jump;
+
+    struct {
+        int x;
+        int y;
+    } end;
+
     expDecay power{}; // initialises exponential decay to calculate player friction
 
     power.innit("src/data/number.bin");
@@ -63,6 +66,26 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
     reader.read(tiles);
     reader.close();
 
+    for (int j = 0; j < reader.length; ++j) {
+        if (tileData["tiles"][tiles[j].type]["damage"] == true) {
+            ++tempNum;
+        }
+        if (tileData["tiles"][tiles[j].type]["portal"] == true) {
+            end.x = tiles[j].x * TILESIZE;
+            end.y = (1 - tiles[j].y) * TILESIZE;
+        }
+    }
+
+    tile spikes[tempNum];
+    tempNum = 0;
+
+    for (int j = 0; j < reader.length; ++j) {
+        if (tileData["tiles"][tiles[j].type]["damage"] == true) {
+            spikes[tempNum] = tiles[j];
+            ++tempNum;
+        }
+    }
+
     std::ifstream config(std::string("data/levels/lvl")+std::string(std::to_string(lvl))+std::string("/levelConfig.json"));
     json configFile = json::parse(config);
 
@@ -87,8 +110,8 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
             // }
         }
 
-        playerPos.x = round((screen.w - playerPos.w) / 2 + player.x - screen.ofsetX);
-        playerPos.y = round((screen.h - playerPos.h) / 2 + player.y - screen.ofsetY);
+        playerPos.x = round((screen.w) / 2 + player.x - screen.ofsetX);
+        playerPos.y = round((screen.h) / 2 + player.y - screen.ofsetY);
         SDL_RenderCopyEx(rend, playerSprite, NULL, &playerPos, 0, 0, (player.flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE));
 
         
@@ -109,7 +132,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
             if (tileData["tiles"][tiles[i].type]["collisions"] == true) {
                 temp.x = tiles[i].x * TILESIZE;
                 temp.y = (1 - tiles[i].y) * TILESIZE;
-                if (colidetect(SDL_Rect{int((-playerPos.w) / 2 + player.x + player.VectX * deltaTime / 1000), int((-playerPos.h) / 2 + player.y), playerPos.w, playerPos.h}, temp)) {
+                if (colidetect(SDL_Rect{int(player.x + player.VectX * deltaTime / 1000), int(player.y), playerPos.w, playerPos.h}, temp)) {
                     flag = 1;
                     break;
                 }
@@ -127,7 +150,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
             if (tileData["tiles"][tiles[i].type]["collisions"]) {
                 temp.x = tiles[i].x * TILESIZE;
                 temp.y = (1 - tiles[i].y) * TILESIZE;
-                if (colidetect(SDL_Rect{int((-playerPos.w) / 2 + player.x), int((-playerPos.h) / 2 + player.y + player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
+                if (colidetect(SDL_Rect{int(player.x), int(player.y + player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
                     flag = 1;
                     if (player.VectY >= 0) {
                         jump = 1;
@@ -143,29 +166,24 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
             player.VectY = 0;
         }
 
-        for (int j = 0; j < reader.length; ++j) {
-            if (tileData["tiles"][tiles[j].type]["damage"] == true) {
-                if (colidetect(SDL_Rect{round((-playerPos.w) / 2 + player.x), round((-playerPos.h) / 2 + player.y), playerPos.w, playerPos.h}, 
-                            SDL_Rect{tiles[j].x * TILESIZE + int(tileData["tiles"][tiles[j].type]["hitbox"][0]) * SCALE, 
-                            (1 - tiles[j].y) * TILESIZE + int(tileData["tiles"][tiles[j].type]["hitbox"][1]) * SCALE, 
-                            int(tileData["tiles"][tiles[j].type]["hitbox"][2]) * SCALE, int(tileData["tiles"][tiles[j].type]["hitbox"][3]) * SCALE})) {
+        for (int j = 0; j < tempNum; ++j) {
+            if (tileData["tiles"][spikes[j].type]["damage"] == true) {
+                if (colidetect(SDL_Rect{round(player.x), round(player.y), playerPos.w, playerPos.h}, 
+                            SDL_Rect{spikes[j].x * TILESIZE + int(tileData["tiles"][spikes[j].type]["hitbox"][0]) * SCALE, 
+                            (1 - spikes[j].y) * TILESIZE + int(tileData["tiles"][spikes[j].type]["hitbox"][1]) * SCALE, 
+                            int(tileData["tiles"][spikes[j].type]["hitbox"][2]) * SCALE, int(tileData["tiles"][spikes[j].type]["hitbox"][3]) * SCALE})) {
                     reset(player);
                 }
             }
         }
 
-        for (int j = 0; j < reader.length; ++j) {
-            if (tileData["tiles"][tiles[j].type]["portal"] == true) {
-                if (colidetect(SDL_Rect{round((-playerPos.w) / 2 + player.x), round((-playerPos.h) / 2 + player.y), playerPos.w, playerPos.h}, 
-                            SDL_Rect{tiles[j].x * TILESIZE, (1 - tiles[j].y) * TILESIZE, TILESIZE, TILESIZE})) {
-                    return(1);
-                }
-            }
+        if (colidetect(SDL_Rect{round(player.x), round(player.y), playerPos.w, playerPos.h},
+        SDL_Rect{end.x, end.y, TILESIZE, TILESIZE})) {
+            return(1);
         }
-
     
-        screen.ofsetX -= (screen.ofsetX - player.x) * (1 - power.sqr(deltaTime));
-        screen.ofsetY -= (screen.ofsetY - player.y) * (1 - power.sqr(deltaTime));
+        screen.ofsetX -= (screen.ofsetX - player.x + player.w / 2) * (1 - power.sqr(deltaTime));
+        screen.ofsetY -= (screen.ofsetY - player.y + player.h / 2) * (1 - power.sqr(deltaTime));
 
         player.VectX *= power.sqr(deltaTime);
         player.VectY *= power.sqr(int(deltaTime / 6));

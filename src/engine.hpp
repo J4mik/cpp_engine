@@ -36,20 +36,6 @@ struct {
 
 bool running = 1;
 
-// void innit(std::basic_string<char> file) {
-// 	std::ofstream outputFileStream;
-// 	outputFileStream.open(file, std::ios::out|std::ios::binary);
-// 	outputFileStream.write((char*) &tempFloat, 4); // size if uint32_t is 4
-// 	outputFileStream.close();
-
-
-// 	std::ifstream inputFileStream;
-// 	inputFileStream.open(file, std::ios::in|std::ios::binary);
-//     inputFileStream.read((char*) &newFloat, 4); // if doesn't work try: sizeof(uint32_t) instead of 4
-// 	inputFileStream.close();
-// 	std::cout << newFloat;
-// }
-
 class chunk {
 	public:
 		int16_t chunk[0][3];

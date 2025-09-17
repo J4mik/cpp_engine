@@ -22,6 +22,10 @@ class file {
         try {
             error = 1;
             inputFileStream.open(path, std::ios::in|std::ios::binary);
+            if (!inputFileStream.is_open()) {
+                inputFileStream.close();
+                return 0;
+            }
             inputFileStream.seekg(0, std::fstream::end);
             fileSize = int(inputFileStream.tellg()) + 1;
             length = int(fileSize / classSize); // the 6 is for the size of "struct" [int16_t, int16_t, int16_t] this can be replaced if a different struct is used
