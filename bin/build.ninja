@@ -61,7 +61,7 @@ build CMakeFiles/Defblade.dir/main.cpp.obj: CXX_COMPILER__Defblade_unscanned_ C$
 
 build Defblade.exe: CXX_EXECUTABLE_LINKER__Defblade_ CMakeFiles/Defblade.dir/main.cpp.obj
   FLAGS = -mwindows
-  LINK_LIBRARIES = -lmingw32  -lSDL2main  -lSDL2  -lSDL2_image  -lSDL2_mixer  -lSDL2_ttf  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  LINK_LIBRARIES = -lmingw32  -lSDL2main  -lSDL2  -lSDL3  -lSDL3_image  -lSDL3_mixer  -lSDL3_ttf  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   LINK_PATH = -LC:/Users/User/Desktop/cpp_engine/lib
   OBJECT_DIR = CMakeFiles\Defblade.dir
   POST_BUILD = cd .

@@ -20,9 +20,9 @@ link_directories(${CMAKE_SOURCE_DIR}/lib)
 add_executable(Defblade ${SOURCES})
 
 # libraries to compile with -lSDL2main ...
-set(SDL2_LIBRARIES mingw32 SDL2main SDL2 SDL2_image SDL2_mixer SDL2_ttf)
+set(SDL3_LIBRARIES mingw32 SDL2main SDL2 SDL3 SDL3_image SDL3_mixer SDL3_ttf)
 
 # link it so ld can find it
-target_link_libraries(Defblade PUBLIC ${SDL2_LIBRARIES})
+target_link_libraries(Defblade PUBLIC ${SDL3_LIBRARIES})
 
 # target_sources(Defblade PRIVATE resources.rc)
