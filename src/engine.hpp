@@ -159,7 +159,7 @@ void inputs() {
     
 	
 	deltaTime = SDL_GetTicks() - lastTick;
-	if (deltaTime > 256 || deltaTime < 0) {
+	if (deltaTime > 250 || deltaTime < 0) {
 		deltaTime = 0;
 	}
 	lastTick = SDL_GetTicks();

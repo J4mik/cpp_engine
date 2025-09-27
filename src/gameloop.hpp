@@ -11,6 +11,7 @@ using namespace nlohmann;
 #define TILESIZEINPIXELS 12
 #define SPEED 1.7
 #define GRAVITY 1.8
+#define FALLTIME 40
 
 struct {
     float x;
@@ -30,7 +31,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
 
     int tempNum;
     bool flag;
-    bool jump;
+    uint8_t jump;
 
     struct {
         float x;
@@ -113,8 +114,14 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * (power.sqr(deltaTime) + 1) * deltaTime * SPEED; // player movement & integral to account for friction
         if (jump && (key.w || key.upArrow)) {
             player.VectY = -620;
-        }                
-        jump = 0;
+            jump = 0;
+        }    
+        if (deltaTime < jump) {        
+            jump -= deltaTime;
+        }
+        else {
+            jump = 0;
+        }
 
         player.VectY += deltaTime * GRAVITY;
 
@@ -149,7 +156,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
                 if (colidetect(SDL_FRect{player.x, player.y + player.VectY * deltaTime / 1000, playerPos.w, playerPos.h}, temp)) {
                     flag = 1;
                     if (player.VectY >= 0) {
-                        jump = 1;
+                        jump = FALLTIME;
                     }
                     break;
                 }
