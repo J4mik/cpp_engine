@@ -108,16 +108,16 @@ void inputs() {
 						key.r = 1;
 						break;
 
-					case SDLK_UP:
+					case SDL_SCANCODE_UP:
 						key.upArrow = 1;
 						break;
-					case SDLK_LEFT:
+					case SDL_SCANCODE_LEFT:
 						key.leftArrow = 1;
 						break;
-					case SDLK_DOWN:
+					case SDL_SCANCODE_DOWN:
 						key.downArrow = 1;
 						break;
-					case SDLK_RIGHT:
+					case SDL_SCANCODE_RIGHT:
 						key.rightArrow = 1;
 						break;
 				}
@@ -141,16 +141,16 @@ void inputs() {
 						key.r = 0;
 						break;
 
-					case SDLK_UP:
+					case SDL_SCANCODE_UP:
 						key.upArrow = 0;
 						break;
-					case SDLK_LEFT:
+					case SDL_SCANCODE_LEFT:
 						key.leftArrow = 0;
 						break;
-					case SDLK_DOWN:
+					case SDL_SCANCODE_DOWN:
 						key.downArrow = 0;
 						break;
-					case SDLK_RIGHT:
+					case SDL_SCANCODE_RIGHT:
 						key.rightArrow = 0;
 						break;
 				}

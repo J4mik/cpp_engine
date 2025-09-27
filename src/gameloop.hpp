@@ -12,6 +12,7 @@ using namespace nlohmann;
 #define SPEED 1.7
 #define GRAVITY 1.8
 #define FALLTIME 40
+#define JUMP 570
 
 struct {
     float x;
@@ -113,7 +114,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         
         player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * (power.sqr(deltaTime) + 1) * deltaTime * SPEED; // player movement & integral to account for friction
         if (jump && (key.w || key.upArrow)) {
-            player.VectY = -620;
+            player.VectY = -JUMP;
             jump = 0;
         }    
         if (deltaTime < jump) {        
@@ -199,7 +200,6 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
             player.flip = 1;
         }
         SDL_RenderPresent(rend);
-        // SDL_UpdateWindowSurface(win);
         SDL_Delay(5);
     }
     return(0);
