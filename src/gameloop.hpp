@@ -10,6 +10,7 @@ using namespace nlohmann;
 #define TILESIZE 36
 #define TILESIZEINPIXELS 12
 #define SPEED 1.7
+#define GRAVITY 1.8
 
 struct {
     float x;
@@ -43,9 +44,10 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
     std::ifstream ifs("data/levels/blockData.json");
     json tileData = json::parse(ifs);
     SDL_Texture* texture = IMG_LoadTexture(rend, "data/images/blocks.png");
+    SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
 
-	SDL_Texture* playerSprite;
-    playerSprite = IMG_LoadTexture(rend, "data/images/player.png");
+	SDL_Texture* playerSprite = IMG_LoadTexture(rend, "data/images/player.png");
+    SDL_SetTextureScaleMode(playerSprite, SDL_SCALEMODE_NEAREST);
 
     SDL_FRect temp{0, 0, TILESIZE, TILESIZE};
 
@@ -114,12 +116,13 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         }                
         jump = 0;
 
-        player.VectY += deltaTime * 1.8;
+        player.VectY += deltaTime * GRAVITY;
 
         if (key.r) {
            reset(player);
         }
 
+        // player collisions
         flag = 0;
         for (int i = 0; i < reader.length; ++i) {
             if (tileData["tiles"][tiles[i].type]["collisions"] == true) {
@@ -175,11 +178,12 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
             return(1);
         }
     
+        // screen ofset
         screen.ofsetX -= (screen.ofsetX - player.x + player.w / 2) * (1 - power.sqr(deltaTime));
         screen.ofsetY -= (screen.ofsetY - player.y + player.h / 2) * (1 - power.sqr(deltaTime));
 
         player.VectX *= power.sqr(deltaTime);
-        player.VectY *= power.sqr(int(deltaTime / 6));
+        player.VectY *= power.sqr(int(deltaTime / 8));
 
         if (player.VectX > 0) {
             player.flip = 0;
@@ -188,7 +192,8 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
             player.flip = 1;
         }
         SDL_RenderPresent(rend);
-        // SDL_Delay(1);
+        // SDL_UpdateWindowSurface(win);
+        SDL_Delay(5);
     }
     return(0);
 }

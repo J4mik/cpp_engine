@@ -90,21 +90,21 @@ void inputs() {
 				running = 0;
 				break;
 			case SDL_EVENT_KEY_DOWN:
-				switch (event.key.type) {
-					case SDLK_W:
+				switch (event.key.scancode) {
+					case SDL_SCANCODE_W:
 						key.w = 1;
 						break;
-					case SDLK_A:
+					case SDL_SCANCODE_A:
 						key.a = 1;
 						break;
-					case SDLK_S:
+					case SDL_SCANCODE_S:
 						key.s = 1;
 						break;
-					case SDLK_D:
+					case SDL_SCANCODE_D:
 						key.d = 1;
 						break;
 
-					case SDLK_R:
+					case SDL_SCANCODE_R:
 						key.r = 1;
 						break;
 
@@ -123,21 +123,21 @@ void inputs() {
 				}
 			break;
 			case SDL_EVENT_KEY_UP: 
-				switch (event.key.type) {
-					case SDLK_W:
+				switch (event.key.scancode) {
+					case SDL_SCANCODE_W:
 						key.w = 0;
 						break;
-					case SDLK_A:
+					case SDL_SCANCODE_A:
 						key.a = 0;
 						break;
-					case SDLK_S:
+					case SDL_SCANCODE_S:
 						key.s = 0;
 						break;
-					case SDLK_D:
+					case SDL_SCANCODE_D:
 						key.d = 0;
 						break;
 
-					case SDLK_R:
+					case SDL_SCANCODE_R:
 						key.r = 0;
 						break;
 
@@ -158,11 +158,9 @@ void inputs() {
         }
     
 	
-	if ((SDL_GetTicksNS() - lastTick) < 256) {
-		deltaTime = SDL_GetTicksNS() - lastTick;
-	}
-	else {
+	deltaTime = SDL_GetTicks() - lastTick;
+	if (deltaTime > 256 || deltaTime < 0) {
 		deltaTime = 0;
 	}
-	lastTick = SDL_GetTicksNS();
+	lastTick = SDL_GetTicks();
 }

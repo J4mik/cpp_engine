@@ -9,6 +9,7 @@ int main(int argc, char *argv[]) {
 	SDL_Window* win = SDL_CreateWindow("Flashblade", screen.w, screen.h, SDL_WINDOW_RESIZABLE);
 	SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	SDL_Renderer* rend = SDL_CreateRenderer(win, NULL);
+	// SDL_SetHint(SDL_ScaleModeLinear, "0");
 
     while (game(level, win, rend)) {
         ++level;
