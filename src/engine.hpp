@@ -7,18 +7,18 @@ uint16_t deltaTime;
 struct {
 	int w = 1000;
 	int h = 600;
-	double ofsetX;
-	double ofsetY;
+	float ofsetX;
+	float ofsetY;
 } screen;
 
 class sprite {
 	public:
-	double x;
-	double y;
+	float x;
+	float y;
 	uint16_t h;
 	uint16_t w;
-	double VectX;
-	double VectY;
+	float VectX;
+	float VectY;
 	bool flip;
 };
 
@@ -86,9 +86,9 @@ void inputs() {
 
 		while (SDL_PollEvent(&event)) {
             switch (event.type) {
-			// case SDL_QuitEvent: 
-			// 	running = 0;
-			// 	break;
+			case SDL_EVENT_QUIT: 
+				running = 0;
+				break;
 			case SDL_EVENT_KEY_DOWN:
 				switch (event.key.type) {
 					case SDLK_W:
@@ -158,7 +158,7 @@ void inputs() {
         }
     
 	
-	if ((SDL_GetTicksNS() - lastTick) < 512) {
+	if ((SDL_GetTicksNS() - lastTick) < 256) {
 		deltaTime = SDL_GetTicksNS() - lastTick;
 	}
 	else {

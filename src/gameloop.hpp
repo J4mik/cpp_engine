@@ -7,9 +7,13 @@
 
 using namespace nlohmann;
 
+#define TILESIZE 36
+#define TILESIZEINPIXELS 12
+#define SPEED 1.7
+
 struct {
-    int x;
-    int y;
+    float x;
+    float y;
 } spawn;
 
 void reset(sprite (&players)) {
@@ -20,9 +24,6 @@ void reset(sprite (&players)) {
 }
 
 bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
-    #define TILESIZE 36
-    #define TILESIZEINPIXELS 12
-    #define SPEED 1.7
 
     int SCALE = (TILESIZE / TILESIZEINPIXELS);
 
@@ -31,8 +32,8 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
     bool jump;
 
     struct {
-        int x;
-        int y;
+        float x;
+        float y;
     } end;
 
     expDecay power{}; // initialises exponential decay to calculate player friction
@@ -41,16 +42,10 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
 
     std::ifstream ifs("data/levels/blockData.json");
     json tileData = json::parse(ifs);
+    SDL_Texture* texture = IMG_LoadTexture(rend, "data/images/blocks.png");
 
-    SDL_Texture* render;
-
-    SDL_Surface* blocks;
-    SDL_Surface* playerImage;
-
-	blocks = IMG_Load("data/images/blocks.png");
-	playerImage = IMG_Load("data/images/player.png");
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(rend, blocks);
-	SDL_Texture* playerSprite = SDL_CreateTextureFromSurface(rend, playerImage);
+	SDL_Texture* playerSprite;
+    playerSprite = IMG_LoadTexture(rend, "data/images/player.png");
 
     SDL_FRect temp{0, 0, TILESIZE, TILESIZE};
 
@@ -104,14 +99,12 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         for (int i = 0; i < reader.length; ++i) {
             temp.x = tiles[i].x * TILESIZE - screen.ofsetX + screen.w / 2;
             temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY + screen.h / 2;
-            // if (colidetect(temp, SDL_FRect{110, 110, screen.w, screen.h})) {
-                clip = {tileData["tiles"][tiles[i].type]["pos"][0], tileData["tiles"][tiles[i].type]["pos"][1], TILESIZEINPIXELS, TILESIZEINPIXELS};
-                SDL_RenderTexture(rend, texture, &clip, &temp);
-            // }
+            clip = {tileData["tiles"][tiles[i].type]["pos"][0], tileData["tiles"][tiles[i].type]["pos"][1], TILESIZEINPIXELS, TILESIZEINPIXELS};
+            SDL_RenderTexture(rend, texture, &clip, &temp);
         }
 
-        playerPos.x = round((screen.w) / 2 + player.x - screen.ofsetX);
-        playerPos.y = round((screen.h) / 2 + player.y - screen.ofsetY);
+        playerPos.x = (screen.w) / 2 + player.x - screen.ofsetX;
+        playerPos.y = (screen.h) / 2 + player.y - screen.ofsetY;
         SDL_RenderTextureRotated(rend, playerSprite, NULL, &playerPos, 0, 0, (player.flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE));
 
         
@@ -132,7 +125,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
             if (tileData["tiles"][tiles[i].type]["collisions"] == true) {
                 temp.x = tiles[i].x * TILESIZE;
                 temp.y = (1 - tiles[i].y) * TILESIZE;
-                if (colidetect(SDL_FRect{int(player.x + player.VectX * deltaTime / 1000), int(player.y), playerPos.w, playerPos.h}, temp)) {
+                if (colidetect(SDL_FRect{player.x + player.VectX * deltaTime / 1000, player.y, playerPos.w, playerPos.h}, temp)) {
                     flag = 1;
                     break;
                 }
@@ -150,7 +143,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
             if (tileData["tiles"][tiles[i].type]["collisions"]) {
                 temp.x = tiles[i].x * TILESIZE;
                 temp.y = (1 - tiles[i].y) * TILESIZE;
-                if (colidetect(SDL_FRect{int(player.x), int(player.y + player.VectY * deltaTime / 1000), playerPos.w, playerPos.h}, temp)) {
+                if (colidetect(SDL_FRect{player.x, player.y + player.VectY * deltaTime / 1000, playerPos.w, playerPos.h}, temp)) {
                     flag = 1;
                     if (player.VectY >= 0) {
                         jump = 1;
@@ -168,16 +161,16 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
 
         for (int j = 0; j < tempNum; ++j) {
             if (tileData["tiles"][spikes[j].type]["damage"] == true) {
-                if (colidetect(SDL_FRect{round(player.x), round(player.y), playerPos.w, playerPos.h}, 
-                            SDL_FRect{spikes[j].x * TILESIZE + int(tileData["tiles"][spikes[j].type]["hitbox"][0]) * SCALE, 
-                            (1 - spikes[j].y) * TILESIZE + int(tileData["tiles"][spikes[j].type]["hitbox"][1]) * SCALE, 
-                            int(tileData["tiles"][spikes[j].type]["hitbox"][2]) * SCALE, int(tileData["tiles"][spikes[j].type]["hitbox"][3]) * SCALE})) {
+                if (colidetect(SDL_FRect{player.x, player.y, playerPos.w, playerPos.h}, 
+                            SDL_FRect{spikes[j].x * TILESIZE + float(tileData["tiles"][spikes[j].type]["hitbox"][0]) * SCALE, 
+                            (1 - spikes[j].y) * TILESIZE + float(tileData["tiles"][spikes[j].type]["hitbox"][1]) * SCALE, 
+                            float(tileData["tiles"][spikes[j].type]["hitbox"][2]) * SCALE, float(tileData["tiles"][spikes[j].type]["hitbox"][3]) * SCALE})) {
                     reset(player);
                 }
             }
         }
 
-        if (colidetect(SDL_FRect{round(player.x), round(player.y), playerPos.w, playerPos.h},
+        if (colidetect(SDL_FRect{player.x, player.y, playerPos.w, playerPos.h},
         SDL_FRect{end.x, end.y, TILESIZE, TILESIZE})) {
             return(1);
         }
@@ -194,9 +187,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         else if (player.VectX < 0) {
             player.flip = 1;
         }
-        
         SDL_RenderPresent(rend);
-
         // SDL_Delay(1);
     }
     return(0);

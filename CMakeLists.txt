@@ -7,7 +7,7 @@ set(CMAKE_CPP_COMPILER g++)
 set(CMAKE_MAKE_PROGRAM ninja)
 
 # for release
-set(CMAKE_CXX_FLAGS -mwindows)
+set(CMAKE_CXX_FLAGS) #-mwindows)
 
 # sources
 set(SOURCES main.cpp)# src/tiles.cpp)
@@ -20,7 +20,7 @@ link_directories(${CMAKE_SOURCE_DIR}/lib)
 add_executable(Defblade ${SOURCES})
 
 # libraries to compile with -lSDL2main ...
-set(SDL3_LIBRARIES mingw32 SDL2main SDL2 SDL3 SDL3_image SDL3_mixer SDL3_ttf)
+set(SDL3_LIBRARIES mingw32 SDL3 SDL3_image SDL3_mixer SDL3_ttf)
 
 # link it so ld can find it
 target_link_libraries(Defblade PUBLIC ${SDL3_LIBRARIES})
