@@ -13,11 +13,16 @@ using namespace nlohmann;
 #define GRAVITY 1.8
 #define FALLTIME 40
 #define JUMP 570
+#define FRICTIONX 0.875
+#define FRICTIONY 0.0625
+#define GROUNDFRICTION 0.625
 
 struct {
     float x;
     float y;
 } spawn;
+
+uint64_t nextSong = 0;
 
 void reset(sprite (&players)) {
     players.x = spawn.x;
@@ -27,12 +32,13 @@ void reset(sprite (&players)) {
 }
 
 bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
-    MIX_Init();
+    // MIX_Init();
 	SDL_AudioSpec audioSpec;
     audioSpec.format = SDL_AUDIO_F32;
     audioSpec.channels = 2;
     audioSpec.freq = 44100;
     MIX_Mixer* mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audioSpec);
+    auto music = MIX_LoadAudio(mixer, "data/audio/level.wav", 1);
     auto fall = MIX_LoadAudio(mixer, "data/audio/fall.wav", 1);
 
     int SCALE = (TILESIZE / TILESIZEINPIXELS);
@@ -175,6 +181,22 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         }
         else {
             player.VectY = 0;
+            if (player.VectX > 0) {
+                if ((player.VectX - GROUNDFRICTION * deltaTime) / player.VectX < 0) {
+                    player.VectX = 0;
+                }
+                else {
+                    player.VectX -= GROUNDFRICTION * deltaTime;
+                }
+            }
+            else if (player.VectX < 0) {
+                if ((player.VectX + GROUNDFRICTION * deltaTime) / player.VectX < 0) {
+                         player.VectX = 0;
+                }
+                else {
+                    player.VectX += GROUNDFRICTION * deltaTime;
+                }
+            }
         }
 
         for (int j = 0; j < tempNum; ++j) {
@@ -198,8 +220,8 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         screen.ofsetX -= (screen.ofsetX - player.x + player.w / 2) * (1 - power.sqr(round(deltaTime / 2)));
         screen.ofsetY -= (screen.ofsetY - player.y + player.h / 2) * (1 - power.sqr(round(deltaTime / 2)));
 
-        player.VectX *= power.sqr(deltaTime);
-        player.VectY *= power.sqr(int(deltaTime / 12));
+        player.VectX *= power.sqr(int(deltaTime * FRICTIONX));
+        player.VectY *= power.sqr(int(deltaTime * FRICTIONY));
 
         if (player.VectX > 0) {
             player.flip = 0;
@@ -208,6 +230,12 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
             player.flip = 1;
         }
         SDL_RenderPresent(rend);
+
+        if ((lastTick - nextSong + 100000) >= 100000) {
+            nextSong = lastTick + 72000;
+            MIX_PlayAudio(mixer, music);
+        }
+
         SDL_Delay(5);
     }
     return(0);
