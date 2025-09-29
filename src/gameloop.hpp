@@ -27,6 +27,13 @@ void reset(sprite (&players)) {
 }
 
 bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
+    MIX_Init();
+	SDL_AudioSpec audioSpec;
+    audioSpec.format = SDL_AUDIO_F32;
+    audioSpec.channels = 2;
+    audioSpec.freq = 44100;
+    MIX_Mixer* mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audioSpec);
+    auto fall = MIX_LoadAudio(mixer, "data/audio/fall.wav", 1);
 
     int SCALE = (TILESIZE / TILESIZEINPIXELS);
 
@@ -176,6 +183,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
                             SDL_FRect{spikes[j].x * TILESIZE + float(tileData["tiles"][spikes[j].type]["hitbox"][0]) * SCALE, 
                             (1 - spikes[j].y) * TILESIZE + float(tileData["tiles"][spikes[j].type]["hitbox"][1]) * SCALE, 
                             float(tileData["tiles"][spikes[j].type]["hitbox"][2]) * SCALE, float(tileData["tiles"][spikes[j].type]["hitbox"][3]) * SCALE})) {
+                    MIX_PlayAudio(mixer, fall);
                     reset(player);
                 }
             }
@@ -187,11 +195,11 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         }
     
         // screen ofset
-        screen.ofsetX -= (screen.ofsetX - player.x + player.w / 2) * (1 - power.sqr(deltaTime));
-        screen.ofsetY -= (screen.ofsetY - player.y + player.h / 2) * (1 - power.sqr(deltaTime));
+        screen.ofsetX -= (screen.ofsetX - player.x + player.w / 2) * (1 - power.sqr(round(deltaTime / 2)));
+        screen.ofsetY -= (screen.ofsetY - player.y + player.h / 2) * (1 - power.sqr(round(deltaTime / 2)));
 
         player.VectX *= power.sqr(deltaTime);
-        player.VectY *= power.sqr(int(deltaTime / 8));
+        player.VectY *= power.sqr(int(deltaTime / 12));
 
         if (player.VectX > 0) {
             player.flip = 0;
