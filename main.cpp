@@ -10,6 +10,13 @@ int main(int argc, char *argv[]) {
 	SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	SDL_Renderer* rend = SDL_CreateRenderer(win, NULL);
 
+	ByteBounce = TTF_OpenFont("data/fonts/ByteBounce.ttf", 96);
+	fColor.r = 255;
+    fColor.g = 0;
+    fColor.b = 127;
+	fontSurface = TTF_RenderText_Solid(ByteBounce, "hello", 10, fColor);
+	SDL_BlitSurface(fontSurface, NULL, &screene, &fontPos);
+
 	MIX_Init();
 
     while (game(level, win, rend)) {

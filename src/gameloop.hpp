@@ -24,6 +24,12 @@ struct {
 
 uint64_t nextSong = 0;
 
+TTF_Font* ByteBounce;
+SDL_Surface* fontSurface;
+SDL_Color fColor;
+SDL_Surface screene;
+SDL_Rect fontPos{0, 0, 0, 0};
+
 void reset(sprite (&players)) {
     players.x = spawn.x;
     players.y = spawn.y;
@@ -112,18 +118,6 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         SDL_RenderClear(rend);
         
         inputs();
-
-        for (int i = 0; i < reader.length; ++i) {
-            temp.x = tiles[i].x * TILESIZE - screen.ofsetX + screen.w / 2;
-            temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY + screen.h / 2;
-            clip = {tileData["tiles"][tiles[i].type]["pos"][0], tileData["tiles"][tiles[i].type]["pos"][1], TILESIZEINPIXELS, TILESIZEINPIXELS};
-            SDL_RenderTexture(rend, texture, &clip, &temp);
-        }
-
-        playerPos.x = (screen.w) / 2 + player.x - screen.ofsetX;
-        playerPos.y = (screen.h) / 2 + player.y - screen.ofsetY;
-        SDL_RenderTextureRotated(rend, playerSprite, NULL, &playerPos, 0, 0, (player.flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE));
-
         
         player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * (power.sqr(deltaTime) + 1) * deltaTime * SPEED; // player movement & integral to account for friction
         if (jump && (key.w || key.upArrow)) {
@@ -179,7 +173,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         if (!flag) {
             player.y += player.VectY * deltaTime / 1000;
         }
-        else {
+        else { // calculates friction if touching ground
             player.VectY = 0;
             if (player.VectX > 0) {
                 if ((player.VectX - GROUNDFRICTION * deltaTime) / player.VectX < 0) {
@@ -199,6 +193,17 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
             }
         }
 
+        for (int i = 0; i < reader.length; ++i) {
+            temp.x = tiles[i].x * TILESIZE - screen.ofsetX + screen.w / 2;
+            temp.y = (1 - tiles[i].y) * TILESIZE - screen.ofsetY + screen.h / 2;
+            clip = {tileData["tiles"][tiles[i].type]["pos"][0], tileData["tiles"][tiles[i].type]["pos"][1], TILESIZEINPIXELS, TILESIZEINPIXELS};
+            SDL_RenderTexture(rend, texture, &clip, &temp);
+        }
+
+        playerPos.x = (screen.w) / 2 + player.x - screen.ofsetX;
+        playerPos.y = (screen.h) / 2 + player.y - screen.ofsetY;
+        SDL_RenderTextureRotated(rend, playerSprite, NULL, &playerPos, 0, 0, (player.flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE));
+
         for (int j = 0; j < tempNum; ++j) {
             if (tileData["tiles"][spikes[j].type]["damage"] == true) {
                 if (colidetect(SDL_FRect{player.x, player.y, playerPos.w, playerPos.h}, 
@@ -215,13 +220,6 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         SDL_FRect{end.x, end.y, TILESIZE, TILESIZE})) {
             return(1);
         }
-    
-        // screen ofset
-        screen.ofsetX -= (screen.ofsetX - player.x + player.w / 2) * (1 - power.sqr(round(deltaTime / 2)));
-        screen.ofsetY -= (screen.ofsetY - player.y + player.h / 2) * (1 - power.sqr(round(deltaTime / 2)));
-
-        player.VectX *= power.sqr(int(deltaTime * FRICTIONX));
-        player.VectY *= power.sqr(int(deltaTime * FRICTIONY));
 
         if (player.VectX > 0) {
             player.flip = 0;
@@ -229,7 +227,16 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         else if (player.VectX < 0) {
             player.flip = 1;
         }
+        SDL_BlitSurface(fontSurface, NULL, &screene, &fontPos);
+        SDL_UpdateWindowSurface(win);
         SDL_RenderPresent(rend);
+
+        // screen ofset
+        screen.ofsetX -= (screen.ofsetX - player.x + player.w / 2) * (1 - power.sqr(round(deltaTime / 2)));
+        screen.ofsetY -= (screen.ofsetY - player.y + player.h / 2) * (1 - power.sqr(round(deltaTime / 2)));
+
+        player.VectX *= power.sqr(int(deltaTime * FRICTIONX));
+        player.VectY *= power.sqr(int(deltaTime * FRICTIONY));
 
         if ((lastTick - nextSong + 100000) >= 100000) {
             nextSong = lastTick + 72000;
