@@ -82,7 +82,10 @@
         "numbers": "cpp",
         "cinttypes": "cpp",
         "variant": "cpp",
-        "text_encoding": "cpp"
+        "text_encoding": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp"
     },
     "makefile.configureOnOpen": true,
     "C_Cpp.errorSquiggles": "disabled"

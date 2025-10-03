@@ -3,8 +3,6 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_image.h>
 #include <SDL3/SDL_timer.h>
-#include <SDL3/SDL_mixer.h>
-#include <SDL3/SDL_ttf.h>
 #include <iostream>
 
 bool colidetect(SDL_FRect a, SDL_FRect b) {

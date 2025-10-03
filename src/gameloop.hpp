@@ -1,9 +1,6 @@
 #include "engine.hpp"
 #include "../include/JSON/json.hpp"
-
-#include <iostream>
-
-#include <vector>
+#include "audio.hpp"
 
 using namespace nlohmann;
 
@@ -24,11 +21,7 @@ struct {
 
 uint64_t nextSong = 0;
 
-TTF_Font* ByteBounce;
-SDL_Surface* fontSurface;
-SDL_Color fColor;
-SDL_Surface screene;
-SDL_Rect fontPos{0, 0, 0, 0};
+SDL_FRect fontPos;
 
 void reset(sprite (&players)) {
     players.x = spawn.x;
@@ -37,17 +30,12 @@ void reset(sprite (&players)) {
     players.VectY = 0;
 }
 
-bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
-    // MIX_Init();
-	SDL_AudioSpec audioSpec;
-    audioSpec.format = SDL_AUDIO_F32;
-    audioSpec.channels = 2;
-    audioSpec.freq = 44100;
-    MIX_Mixer* mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audioSpec);
-    auto music = MIX_LoadAudio(mixer, "data/audio/level.wav", 1);
-    auto fall = MIX_LoadAudio(mixer, "data/audio/fall.wav", 1);
+// audio mainAudio;
 
+bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {    
     int SCALE = (TILESIZE / TILESIZEINPIXELS);
+
+    const char* level = (std::string("level: ")+std::string(std::to_string(lvl))).c_str();
 
     int tempNum;
     bool flag;
@@ -57,6 +45,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         float x;
         float y;
     } end;
+    SDL_FRect box{100, 100, 300, 300};
 
     expDecay power{}; // initialises exponential decay to calculate player friction
 
@@ -109,6 +98,8 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
 
     spawn.x = configFile["level"]["spawn"][0];
     spawn.y = configFile["level"]["spawn"][1];
+
+    Text ByteBounce("data/fonts/ByteBounce.ttf", 32);
 
     sprite player;
     reset(player);
@@ -218,6 +209,13 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
 
         if (colidetect(SDL_FRect{player.x, player.y, playerPos.w, playerPos.h},
         SDL_FRect{end.x, end.y, TILESIZE, TILESIZE})) {
+            for (float i = 0; i < 1500; ++i) {
+                box = {0, 0, 4000, i};
+                SDL_RenderFillRect(rend, &box);
+
+                SDL_RenderPresent(rend);
+                SDL_Delay(0.4);
+            }
             return(1);
         }
 
@@ -227,8 +225,13 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         else if (player.VectX < 0) {
             player.flip = 1;
         }
-        SDL_BlitSurface(fontSurface, NULL, &screene, &fontPos);
-        SDL_UpdateWindowSurface(win);
+
+        ByteBounce.render_toSurface(white, level);
+        fontTexture = SDL_CreateTextureFromSurface(rend, ByteBounce.fontSurface);
+        SDL_GetTextureSize(fontTexture, &(fontPos.w), &(fontPos.h));
+        fontPos.x = (screen.w - fontPos.w) / 2;
+        fontPos.y = 4;
+        SDL_RenderTexture(rend, fontTexture, NULL, &fontPos);
         SDL_RenderPresent(rend);
 
         // screen ofset
@@ -238,12 +241,16 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         player.VectX *= power.sqr(int(deltaTime * FRICTIONX));
         player.VectY *= power.sqr(int(deltaTime * FRICTIONY));
 
-        if ((lastTick - nextSong + 100000) >= 100000) {
+        if ((lastTick - nextSong + 100000) < 100000) {
+            SDL_Delay(5);
+        }
+        else {
             nextSong = lastTick + 72000;
-            MIX_PlayAudio(mixer, music);
+            musicThread();
         }
 
         SDL_Delay(5);
     }
+    musicRunning = 0;
     return(0);
 }
