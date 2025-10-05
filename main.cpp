@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
 	SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	SDL_Renderer* rend = SDL_CreateRenderer(win, NULL);
 	SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
-	SDL_SetRenderDrawColor(rend, 2, 4, 7, 255);
+	SDL_SetRenderDrawColor(rend, 2, 5, 10, 255);
 	
 	load();
 
@@ -19,6 +19,8 @@ int main(int argc, char *argv[]) {
     SDL_SetTextureScaleMode(playButton, SDL_SCALEMODE_NEAREST);
 
 	SDL_FRect playButtonPos;
+    Text ByteBounce("data/fonts/ByteBounce.ttf", 56);
+
 
 	while (!(mouseX > ((screen.w - 96) / 2) && mouseX < ((screen.w + 96) / 2) && mouseY > (screen.h / 2) && mouseY < (screen.h / 2 + 36)) && running) {
 		inputs();
@@ -28,6 +30,13 @@ int main(int argc, char *argv[]) {
 		playButtonPos = {(screen.w - 96) / 2, (screen.h) / 2, 96, 36};
 
 		SDL_RenderTexture(rend, playButton, NULL, &playButtonPos);
+
+		ByteBounce.render_toSurface(white, "Defblade");
+        fontTexture = SDL_CreateTextureFromSurface(rend, ByteBounce.fontSurface);
+        SDL_GetTextureSize(fontTexture, &(fontPos.w), &(fontPos.h));
+        fontPos.x = (screen.w - fontPos.w) / 2;
+        fontPos.y = screen.h / 4;
+        SDL_RenderTexture(rend, fontTexture, NULL, &fontPos);
 
 		SDL_RenderPresent(rend);
 		SDL_Delay(10);

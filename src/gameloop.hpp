@@ -108,6 +108,10 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
 
     sprite player;
     reset(player);
+
+    screen.ofsetX = player.x;
+    screen.ofsetY = player.y;
+
     inputs();
     while (running) {
         inputs();
