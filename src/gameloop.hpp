@@ -10,7 +10,7 @@ using namespace nlohmann;
 #define GRAVITY 1.8
 #define FALLTIME 40
 #define JUMP 570
-#define FRICTIONX 0.875
+#define FRICTIONX 0.95
 #define FRICTIONY 0.0625
 #define GROUNDFRICTION 0.625
 
@@ -19,9 +19,17 @@ struct {
     float y;
 } spawn;
 
+uint8_t loading = 3;
+uint64_t startScroll;
+
 uint64_t nextSong = 0;
 
 SDL_FRect fontPos;
+
+SDL_FRect clip{0, 0, 12, 12};
+
+SDL_FRect temp{0, 0, TILESIZE, TILESIZE};
+SDL_FRect playerPos{0, 0, 16, 24};
 
 void reset(sprite (&players)) {
     players.x = spawn.x;
@@ -30,9 +38,10 @@ void reset(sprite (&players)) {
     players.VectY = 0;
 }
 
-// audio mainAudio;
-
-bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {    
+bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {   
+    if (!running) {
+        return 0;
+    } 
     int SCALE = (TILESIZE / TILESIZEINPIXELS);
 
     const char* level = (std::string("level: ")+std::string(std::to_string(lvl))).c_str();
@@ -45,6 +54,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         float x;
         float y;
     } end;
+
     SDL_FRect box{100, 100, 300, 300};
 
     expDecay power{}; // initialises exponential decay to calculate player friction
@@ -53,17 +63,12 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
 
     std::ifstream ifs("data/levels/blockData.json");
     json tileData = json::parse(ifs);
+
     SDL_Texture* texture = IMG_LoadTexture(rend, "data/images/blocks.png");
     SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
 
 	SDL_Texture* playerSprite = IMG_LoadTexture(rend, "data/images/player.png");
     SDL_SetTextureScaleMode(playerSprite, SDL_SCALEMODE_NEAREST);
-
-    SDL_FRect temp{0, 0, TILESIZE, TILESIZE};
-
-    SDL_FRect playerPos{0, 0, 16, 24};
-
-    SDL_FRect clip{0, 0, 12, 12};
 
     file reader;
     tile tiles[reader.load(std::string(std::string("data/levels/lvl")+std::string(std::to_string(lvl))+std::string("/level.bin")), 6)];
@@ -105,10 +110,10 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
     reset(player);
     inputs();
     while (running) {
+        inputs();
+
         SDL_GetWindowSizeInPixels(win, &screen.w, &screen.h);
         SDL_RenderClear(rend);
-        
-        inputs();
         
         player.VectX += ((key.d || key.rightArrow) - (key.a || key.leftArrow)) * (power.sqr(deltaTime) + 1) * deltaTime * SPEED; // player movement & integral to account for friction
         if (jump && (key.w || key.upArrow)) {
@@ -209,14 +214,10 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
 
         if (colidetect(SDL_FRect{player.x, player.y, playerPos.w, playerPos.h},
         SDL_FRect{end.x, end.y, TILESIZE, TILESIZE})) {
-            for (float i = 0; i < 1500; ++i) {
-                box = {0, 0, 4000, i};
-                SDL_RenderFillRect(rend, &box);
-
-                SDL_RenderPresent(rend);
-                SDL_Delay(0.4);
+            if (loading != 2) {
+                loading = 2;
+                startScroll = lastTick;
             }
-            return(1);
         }
 
         if (player.VectX > 0) {
@@ -224,6 +225,37 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         }
         else if (player.VectX < 0) {
             player.flip = 1;
+        }
+
+        if (loading == 3) {
+            startScroll = lastTick + 500;
+            loading = 1;
+        }
+        if (loading == 1) {
+            if ((int(startScroll - lastTick)) <= 0) {
+                loading = 0;
+            }
+            else if ((startScroll - lastTick) > 255) {
+                SDL_SetRenderDrawColor(rend, 2, 4, 7, 255);
+                box = SDL_FRect{0, 0, screen.w, screen.h};
+                SDL_RenderFillRect(rend, &box);
+            }
+            else {
+                SDL_SetRenderDrawColor(rend, 2, 4, 7, (startScroll - lastTick));
+                box = SDL_FRect{0, 0, screen.w, screen.h};
+                SDL_RenderFillRect(rend, &box);
+            }
+        }
+        else if (loading == 2) {
+            if ((lastTick - startScroll) >= 255) {
+                loading = 3;
+                return 1;
+            }
+            else {
+                SDL_SetRenderDrawColor(rend, 2, 4, 7, (lastTick - startScroll));
+                box = SDL_FRect{0, 0, screen.w, screen.h};
+                SDL_RenderFillRect(rend, &box);
+            }
         }
 
         ByteBounce.render_toSurface(white, level);
@@ -241,16 +273,13 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         player.VectX *= power.sqr(int(deltaTime * FRICTIONX));
         player.VectY *= power.sqr(int(deltaTime * FRICTIONY));
 
-        if ((lastTick - nextSong + 100000) < 100000) {
-            SDL_Delay(5);
-        }
-        else {
+        if (int(lastTick- nextSong) > 0) {
             nextSong = lastTick + 72000;
             musicThread();
         }
 
-        SDL_Delay(5);
+        SDL_Delay(3);
     }
     musicRunning = 0;
-    return(0);
+    return 0;
 }

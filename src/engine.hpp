@@ -35,14 +35,17 @@ struct {
 	bool rightArrow;
 } key;
 
+uint16_t mouseX;
+uint16_t mouseY;
+
 bool running = 1;
 
 class chunk {
 	public:
 		int16_t chunk[0][3];
 };
-SDL_Texture* fontTexture;
 
+SDL_Texture* fontTexture;
 
 constexpr int length = 1024;
 // std::ios_base::failure error;
@@ -125,7 +128,7 @@ void inputs() {
 					key.rightArrow = 1;
 					break;
 			}
-		break;
+			break;
 
 		case SDL_EVENT_KEY_UP: 
 			switch (event.key.scancode) {
@@ -159,12 +162,18 @@ void inputs() {
 					key.rightArrow = 0;
 					break;
 			}
+			break; 
+
+		case SDL_EVENT_MOUSE_BUTTON_DOWN:
+			mouseX = event.motion.x;
+			mouseY = event.motion.y;
+			break;
 		}
     }
     
 	
 	deltaTime = SDL_GetTicks() - lastTick;
-	if (deltaTime > 250 || deltaTime < 0) {
+	if (deltaTime > 250) {
 		deltaTime = 0;
 	}
 	lastTick = SDL_GetTicks();
