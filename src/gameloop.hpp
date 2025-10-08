@@ -263,12 +263,29 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
             }
         }
 
+        SDL_SetRenderDrawColor(rend, 2, 19, 60, 255);
+        box = SDL_FRect{0, 0, screen.w, 34};
+        SDL_RenderFillRect(rend, &box);
+        SDL_SetRenderDrawColor(rend, 200, 200, 200, 255);
+        box = SDL_FRect{0, 34, screen.w, 2};
+        SDL_RenderFillRect(rend, &box);
+
         ByteBounce.render_toSurface(white, level);
         fontTexture = SDL_CreateTextureFromSurface(rend, ByteBounce.fontSurface);
         SDL_GetTextureSize(fontTexture, &(fontPos.w), &(fontPos.h));
         fontPos.x = (screen.w - fontPos.w) / 2;
         fontPos.y = 4;
         SDL_RenderTexture(rend, fontTexture, NULL, &fontPos);
+
+        ByteBounce.render_toSurface(white, "coins: 694");
+        fontTexture = SDL_CreateTextureFromSurface(rend, ByteBounce.fontSurface);
+        SDL_GetTextureSize(fontTexture, &(fontPos.w), &(fontPos.h));
+        fontPos.x = 7;
+        fontPos.y = 4;
+        SDL_RenderTexture(rend, fontTexture, NULL, &fontPos);
+
+        SDL_SetRenderDrawColor(rend, 2, 9, 25, 255);
+
         SDL_RenderPresent(rend);
 
         // screen ofset

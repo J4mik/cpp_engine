@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
 	SDL_Window* win = SDL_CreateWindow("FlashSong", screen.w, screen.h, SDL_WINDOW_RESIZABLE);
 	SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	SDL_Renderer* rend = SDL_CreateRenderer(win, NULL);
-	SDL_SetRenderDrawColor(rend, 2, 9, 25, 255);
+	SDL_SetRenderDrawColor(rend, 2, 19, 60, 255);
 	SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
 	
 	load();
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 
 		SDL_RenderTexture(rend, playButton, NULL, &playButtonPos);
 
-		ByteBounce.render_toSurface(SDL_Color{255, 110, 240, 255}, "FlashSong");
+		ByteBounce.render_toSurface(white, "FlashSong");
         fontTexture = SDL_CreateTextureFromSurface(rend, ByteBounce.fontSurface);
         SDL_GetTextureSize(fontTexture, &(fontPos.w), &(fontPos.h));
         fontPos.x = (screen.w - fontPos.w) / 2;
