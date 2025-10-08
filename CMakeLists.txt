@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15...3.31)
-project(Defblade VERSION 1.0
+project(FlashSong VERSION 1.0
                   DESCRIPTION "Pixel art platformer"
                   LANGUAGES CXX)
 
@@ -17,12 +17,12 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # -Llib
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 
-add_executable(Defblade ${SOURCES})
+add_executable(FlashSong ${SOURCES})
 
 # libraries to compile with -lSDL2main ...
 set(SDL3_LIBRARIES mingw32 SDL3 SDL3_image SDL3_mixer SDL3_ttf)
 
 # link it so ld can find it
-target_link_libraries(Defblade PUBLIC ${SDL3_LIBRARIES})
+target_link_libraries(FlashSong PUBLIC ${SDL3_LIBRARIES})
 
-# target_sources(Defblade PRIVATE resources.rc)
+# target_sources(FlashSong PRIVATE resources.rc)

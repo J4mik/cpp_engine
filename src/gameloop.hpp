@@ -25,11 +25,7 @@ uint64_t startScroll;
 uint64_t nextSong = 0;
 
 SDL_FRect fontPos;
-
 SDL_FRect clip{0, 0, 12, 12};
-
-SDL_FRect temp{0, 0, TILESIZE, TILESIZE};
-SDL_FRect playerPos{0, 0, 16, 24};
 
 void reset(sprite (&players)) {
     players.x = spawn.x;
@@ -45,6 +41,11 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
     int SCALE = (TILESIZE / TILESIZEINPIXELS);
 
     const char* level = (std::string("level: ")+std::string(std::to_string(lvl))).c_str();
+
+            
+
+    SDL_FRect temp{0, 0, TILESIZE, TILESIZE};
+    SDL_FRect playerPos{0, 0, 16, 24};
 
     int tempNum;
     bool flag;
@@ -240,12 +241,12 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
                 loading = 0;
             }
             else if ((startScroll - lastTick) > 255) {
-                SDL_SetRenderDrawColor(rend, 2, 4, 7, 255);
+                SDL_SetRenderDrawColor(rend, 2, 9, 25, 255);
                 box = SDL_FRect{0, 0, screen.w, screen.h};
                 SDL_RenderFillRect(rend, &box);
             }
             else {
-                SDL_SetRenderDrawColor(rend, 2, 4, 7, (startScroll - lastTick));
+                SDL_SetRenderDrawColor(rend, 2, 9, 25, (startScroll - lastTick));
                 box = SDL_FRect{0, 0, screen.w, screen.h};
                 SDL_RenderFillRect(rend, &box);
             }
@@ -256,7 +257,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
                 return 1;
             }
             else {
-                SDL_SetRenderDrawColor(rend, 2, 4, 7, (lastTick - startScroll));
+                SDL_SetRenderDrawColor(rend, 2, 9, 25, (lastTick - startScroll));
                 box = SDL_FRect{0, 0, screen.w, screen.h};
                 SDL_RenderFillRect(rend, &box);
             }

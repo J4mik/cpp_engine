@@ -7,11 +7,11 @@ int main(int argc, char *argv[]) {
 	TTF_Init();
 	MIX_Init();
 
-	SDL_Window* win = SDL_CreateWindow("Flashblade", screen.w, screen.h, SDL_WINDOW_RESIZABLE);
+	SDL_Window* win = SDL_CreateWindow("FlashSong", screen.w, screen.h, SDL_WINDOW_RESIZABLE);
 	SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	SDL_Renderer* rend = SDL_CreateRenderer(win, NULL);
+	SDL_SetRenderDrawColor(rend, 2, 9, 25, 255);
 	SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
-	SDL_SetRenderDrawColor(rend, 2, 5, 10, 255);
 	
 	load();
 
@@ -19,8 +19,7 @@ int main(int argc, char *argv[]) {
     SDL_SetTextureScaleMode(playButton, SDL_SCALEMODE_NEAREST);
 
 	SDL_FRect playButtonPos;
-    Text ByteBounce("data/fonts/ByteBounce.ttf", 56);
-
+    Text ByteBounce("data/fonts/ByteBounce.ttf", 80);
 
 	while (!(mouseX > ((screen.w - 96) / 2) && mouseX < ((screen.w + 96) / 2) && mouseY > (screen.h / 2) && mouseY < (screen.h / 2 + 36)) && running) {
 		inputs();
@@ -31,7 +30,7 @@ int main(int argc, char *argv[]) {
 
 		SDL_RenderTexture(rend, playButton, NULL, &playButtonPos);
 
-		ByteBounce.render_toSurface(white, "Defblade");
+		ByteBounce.render_toSurface(SDL_Color{255, 110, 240, 255}, "FlashSong");
         fontTexture = SDL_CreateTextureFromSurface(rend, ByteBounce.fontSurface);
         SDL_GetTextureSize(fontTexture, &(fontPos.w), &(fontPos.h));
         fontPos.x = (screen.w - fontPos.w) / 2;
