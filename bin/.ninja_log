@@ -1,41 +1,5 @@
 # ninja log v6
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-1769	1884	7806234692392481	Defblades.exe	81cdc8e5d0e1fb2e
-17	1952	7814853368727934	CMakeFiles/Defblade.dir/main.cpp.obj	73d55937ab1bdf87
-1953	2178	7814853388071001	Defblade.exe	91402245b50d18f1
-=======
-66	7764	7814543752845339	CMakeFiles/Defblade.dir/main.cpp.obj	e092f41af8d69296
->>>>>>> 278f25ae2ed457566aa8f6ae5112d94a3769b887
-1769	1884	7806234692392481	Defblades.exe	81cdc8e5d0e1fb2e
-66	7764	7814543752845339	CMakeFiles/Defblade.dir/main.cpp.obj	e092f41af8d69296
-7766	8219	7814543829844207	Defblade.exe	ee845799de5220c9
->>>>>>> be5e8a8f48692ad13bc1085e116074466cf404e4
-40	283	7642820934101390	CMakeFiles/Defblade.dir/src/tiles.cpp.obj	7c80ada489b2ee9f
-7666	8119	7816180623730007	FlashSong.exe	5b487d9e2e7e39d3
-25	955	7722916362571433	CMakeFiles/main.dir/main.cpp.obj	779f4746ab984be2
-68	7663	7816180547821850	CMakeFiles/FlashSong.dir/main.cpp.obj	46c66b8906e79555
-30	1769	7806234675098865	CMakeFiles/Defblades.dir/main.cpp.obj	e5568f5e1259958
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-22	1905	7814853571477158	CMakeFiles/Defblade.dir/main.cpp.obj	73d55937ab1bdf87
-1906	2021	7814853590188775	Defblade.exe	91402245b50d18f1
-=======
-65	7810	7814556603748853	CMakeFiles/FlashSong.dir/main.cpp.obj	46c66b8906e79555
-110	13927	7816173033657422	CMakeFiles/FlashSong.dir/main.cpp.obj	46c66b8906e79555
-13930	14771	7816173171911946	FlashSong.exe	5b487d9e2e7e39d3
->>>>>>> be5e8a8f48692ad13bc1085e116074466cf404e4
->>>>>>> 278f25ae2ed457566aa8f6ae5112d94a3769b887
-=======
-1769	1884	7806234692392481	Defblades.exe	81cdc8e5d0e1fb2e
-22	1905	7814853571477158	CMakeFiles/Defblade.dir/main.cpp.obj	73d55937ab1bdf87
-1906	2021	7814853590188775	Defblade.exe	91402245b50d18f1
-40	283	7642820934101390	CMakeFiles/Defblade.dir/src/tiles.cpp.obj	7c80ada489b2ee9f
-25	955	7722916362571433	CMakeFiles/main.dir/main.cpp.obj	779f4746ab984be2
-2052	2273	7816541147263893	FlashSong.exe	84256d63f8ffa034
-30	1769	7806234675098865	CMakeFiles/Defblades.dir/main.cpp.obj	e5568f5e1259958
-25	2051	7816541126996909	CMakeFiles/FlashSong.dir/main.cpp.obj	676ff4d63fee2a65
->>>>>>> ad61287f2ae4fddbeab6cffa3c0bde79280db6a8
+22	1884	7816548602725067	CMakeFiles/FlashSong.dir/main.cpp.obj	676ff4d63fee2a65
+1885	1999	7816548621271791	FlashSong.exe	84256d63f8ffa034
+21	1841	7816549070087705	CMakeFiles/FlashSong.dir/main.cpp.obj	676ff4d63fee2a65
+1842	1957	7816549088306817	FlashSong.exe	84256d63f8ffa034
