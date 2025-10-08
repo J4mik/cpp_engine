@@ -244,16 +244,16 @@ Defblades_BINARY_DIR:STATIC=C:/Users/User/Desktop/cpp_engine/bin
 Defblades_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-Defblades_SOURCE_DIR:STATIC=C:/Users/User/Desktop/cpp_engine
+Defblades_SOURCE_DIR:STATIC=D:/files/code/cpp_engine
 
 //Value Computed by CMake
-FlashSong_BINARY_DIR:STATIC=C:/Users/User/Desktop/cpp_engine/bin
+FlashSong_BINARY_DIR:STATIC=D:/files/code/cpp_engine/bin
 
 //Value Computed by CMake
 FlashSong_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-FlashSong_SOURCE_DIR:STATIC=C:/Users/User/Desktop/cpp_engine
+FlashSong_SOURCE_DIR:STATIC=D:/files/code/cpp_engine
 
 //Value Computed by CMake
 Flashblade_BINARY_DIR:STATIC=C:/Users/User/Desktop/cpp_engine/bin
