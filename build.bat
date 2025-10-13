@@ -1,5 +1,5 @@
 cmake -S . -B bin -G Ninja 
 cd bin
-ninja
+ninja -j4
 cd ..
 .\bin\FlashSong
