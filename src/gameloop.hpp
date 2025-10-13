@@ -8,7 +8,7 @@ using namespace nlohmann;
 #define TILESIZEINPIXELS 12
 #define SPEED 1.7
 #define GRAVITY 1.8
-#define FALLTIME 40
+#define FALLTIME 60
 #define JUMP 570
 #define FRICTIONX 0.95
 #define FRICTIONY 0.0625
@@ -241,12 +241,12 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
                 loading = 0;
             }
             else if ((startScroll - lastTick) > 255) {
-                SDL_SetRenderDrawColor(rend, 2, 9, 25, 255);
+                SDL_SetRenderDrawColor(rend, 2, 8, 22, 255);
                 box = SDL_FRect{0, 0, screen.w, screen.h};
                 SDL_RenderFillRect(rend, &box);
             }
             else {
-                SDL_SetRenderDrawColor(rend, 2, 9, 25, (startScroll - lastTick));
+                SDL_SetRenderDrawColor(rend, 2, 8, 22, (startScroll - lastTick));
                 box = SDL_FRect{0, 0, screen.w, screen.h};
                 SDL_RenderFillRect(rend, &box);
             }
@@ -257,13 +257,13 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
                 return 1;
             }
             else {
-                SDL_SetRenderDrawColor(rend, 2, 9, 25, (lastTick - startScroll));
+                SDL_SetRenderDrawColor(rend, 2, 8, 22, (lastTick - startScroll));
                 box = SDL_FRect{0, 0, screen.w, screen.h};
                 SDL_RenderFillRect(rend, &box);
             }
         }
 
-        SDL_SetRenderDrawColor(rend, 2, 19, 60, 255);
+        SDL_SetRenderDrawColor(rend, 2, 18, 40, 255);
         box = SDL_FRect{0, 0, screen.w, 34};
         SDL_RenderFillRect(rend, &box);
         SDL_SetRenderDrawColor(rend, 200, 200, 200, 255);
@@ -284,7 +284,7 @@ bool game(int lvl, SDL_Window* win, SDL_Renderer* rend) {
         fontPos.y = 4;
         SDL_RenderTexture(rend, fontTexture, NULL, &fontPos);
 
-        SDL_SetRenderDrawColor(rend, 2, 9, 25, 255);
+        SDL_SetRenderDrawColor(rend, 2, 7, 19, 255);
 
         SDL_RenderPresent(rend);
 
